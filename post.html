@@ -6,30 +6,18 @@
   <title>Пост — Олександр</title>
   <meta name="description" content="Стаття з блогу Олександра">
   <meta name="color-scheme" content="light dark" />
-  
-  <!-- Open Graph -->
-  <meta property="og:type" content="article" />
-  <meta property="og:title" content="Пост — Олександр" />
-  <meta property="og:description" content="Стаття з блогу Олександра" />
-  
-  <!-- Стилі -->
   <link rel="stylesheet" href="css/main.css" />
   <link rel="stylesheet" href="css/gpts-styles.css">
 </head>
 <body>
   <div class="layout">
-    <!-- Навігація (завантажиться через nav.js) -->
-    <aside id="navigation">
-      <div class="loading-state" style="padding: 40px 20px;">
-        <div class="spinner"></div>
-        <p style="font-size: 13px; color: var(--muted);">Завантаження...</p>
-      </div>
-    </aside>
+    <aside id="navigation"></aside>
 
-    <!-- Основний контент -->
     <main>
+      <!-- 🧭 Хлібні крихти -->
+      <div id="breadcrumbs-container" style="max-width:1100px; margin:0 auto; padding:0 40px;"></div>
+
       <div class="container" id="post-content">
-        <!-- Контент завантажиться через blog-loader.js -->
         <div class="loading-state">
           <div class="spinner"></div>
           <p>Завантаження поста...</p>
@@ -38,10 +26,24 @@
     </main>
   </div>
 
-  <!-- JavaScript модулі -->
   <script src="js/utils.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/nav.js"></script>
+  <script src="js/breadcrumbs.js"></script>
   <script src="js/blog-loader.js"></script>
+
+  <script>
+    // Після завантаження поста оновлюємо breadcrumbs
+    document.addEventListener('DOMContentLoaded', () => {
+      // Перехоплюємо функцію renderPost з blog-loader.js
+      const originalRender = window.renderPost;
+      window.renderPost = function(post) {
+        originalRender(post);
+        if (window.initBreadcrumbs) {
+          window.initBreadcrumbs({ postTitle: post.title });
+        }
+      };
+    });
+  </script>
 </body>
 </html>

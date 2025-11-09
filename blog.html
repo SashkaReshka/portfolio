@@ -14,6 +14,9 @@
     <aside id="navigation"></aside>
 
     <main>
+      <!-- 🧭 Хлібні крихти для розділу -->
+      <div id="breadcrumbs-container" style="max-width:1100px; margin:0 auto; padding:0 40px;"></div>
+
       <div class="container">
         <section class="section">
           <h1>Блог</h1>
@@ -48,7 +51,6 @@
           
           <!-- Список постів -->
           <div id="posts-list" class="posts-list">
-            <!-- Картки постів завантажаться через JS -->
             <div class="loading-state">
               <div class="spinner"></div>
               <p>Завантаження постів...</p>
@@ -68,7 +70,15 @@
   <script src="js/utils.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/nav.js"></script>
-  
+  <!-- 🧭 breadcrumbs -->
+  <script src="js/breadcrumbs.js"></script>
+  <script>
+    // Ініціалізація breadcrumbs для розділу
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.initBreadcrumbs) window.initBreadcrumbs();
+    });
+  </script>
+
   <script>
     // Глобальні змінні
     let allPosts = [];

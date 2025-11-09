@@ -14,6 +14,9 @@
     <aside id="navigation"></aside>
 
     <main>
+      <!-- 🧭 Хлібні крихти -->
+      <div id="breadcrumbs-container" style="max-width:1100px; margin:0 auto; padding:0 40px;"></div>
+
       <div class="container">
         <article id="gpt-content" class="section">
           <div class="loading-state">
@@ -28,13 +31,13 @@
   <script src="js/utils.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/nav.js"></script>
-  
+  <script src="js/breadcrumbs.js"></script>
+
   <script>
     // Отримуємо slug з URL
     const urlParams = new URLSearchParams(window.location.search);
     const gptSlug = urlParams.get('gpt');
 
-    // Завантаження GPT при старті
     document.addEventListener('DOMContentLoaded', async () => {
       if (!gptSlug) {
         showError('GPT не знайдено. <a href="gpts.html">Повернутися до списку</a>');
@@ -55,30 +58,33 @@
         
         renderGpt(gpt);
         updateMetaTags(gpt);
+
+        // 🧭 Ініціалізуємо хлібні крихти
+        if (window.initBreadcrumbs) {
+          window.initBreadcrumbs({
+            currentPage: gpt.title,
+            parentPage: 'GPTs Lab',
+            parentUrl: 'gpts.html'
+          });
+        }
+
       } catch (error) {
         console.error('Помилка:', error);
         showError('Помилка завантаження GPT. <a href="gpts.html">Повернутися до списку</a>');
       }
     });
 
-    // Рендеринг GPT
     function renderGpt(gpt) {
       const container = document.getElementById('gpt-content');
-      
-      // Формуємо теги
-      const tagsHTML = gpt.tags && gpt.tags.length > 0
+      const tagsHTML = gpt.tags?.length 
         ? gpt.tags.map(tag => `<a href="gpts.html?tag=${tag}" class="chip">#${tag}</a>`).join(' ')
         : '';
       
       container.innerHTML = `
         <div style="text-align: center; margin-bottom: 2rem;">
-          <div style="font-size: 80px; line-height: 1; margin-bottom: 1rem;">
-            ${gpt.icon}
-          </div>
+          <div style="font-size: 80px; line-height: 1; margin-bottom: 1rem;">${gpt.icon}</div>
           <h1>${gpt.title}</h1>
-          <p class="meta" style="font-size: 18px; margin: 16px 0;">
-            ${gpt.description}
-          </p>
+          <p class="meta" style="font-size: 18px; margin: 16px 0;">${gpt.description}</p>
           ${tagsHTML ? `<div style="margin: 16px 0;">${tagsHTML}</div>` : ''}
           ${gpt.featured ? '<div class="meta" style="color: var(--accent); font-weight: 600; margin-top: 8px;">⭐ Рекомендовано</div>' : ''}
           <div style="margin-top: 24px;">
@@ -87,22 +93,15 @@
             </a>
           </div>
         </div>
-        
-        <div class="content" style="margin-top: 3rem;">
-          ${gpt.content}
-        </div>
-        
+        <div class="content" style="margin-top: 3rem;">${gpt.content}</div>
         <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border); text-align: center;">
           <a href="gpts.html" class="btn">← Назад до списку</a>
         </div>
       `;
     }
 
-    // Оновлення meta-тегів
     function updateMetaTags(gpt) {
       document.title = `${gpt.title} — GPTs Lab — Олександр`;
-      
-      // Оновлюємо description
       let metaDescription = document.querySelector('meta[name="description"]');
       if (!metaDescription) {
         metaDescription = document.createElement('meta');
@@ -112,163 +111,13 @@
       metaDescription.content = gpt.description;
     }
 
-    // Показ помилки
     function showError(message) {
-      const container = document.getElementById('gpt-content');
-      container.innerHTML = `
+      document.getElementById('gpt-content').innerHTML = `
         <div class="error-message" style="text-align: center; padding: 3rem 1rem;">
           <p style="font-size: 18px;">❌ ${message}</p>
         </div>
       `;
     }
   </script>
-</body>
-</html>
-    <script>
-        // Отримуємо slug з URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const gptSlug = urlParams.get('gpt');
-
-        // Завантаження GPT при старті
-        document.addEventListener('DOMContentLoaded', async () => {
-            if (!gptSlug) {
-                showError('GPT не знайдено. <a href="gpts.html">Повернутися до списку</a>');
-                return;
-            }
-
-            try {
-                const response = await fetch('gpts.json');
-                if (!response.ok) throw new Error('Не вдалося завантажити дані');
-                
-                const gpts = await response.json();
-                const gpt = gpts.find(p => p.slug === gptSlug);
-                
-                if (!gpt) {
-                    showError('GPT не знайдено. <a href="gpts.html">Повернутися до списку</a>');
-                    return;
-                }
-                
-                renderGpt(gpt);
-                setupNavigation(gpts, gptSlug);
-                updateMetaTags(gpt);
-            } catch (error) {
-                console.error('Помилка:', error);
-                showError('Помилка завантаження GPT. <a href="gpts.html">Повернутися до списку</a>');
-            }
-        });
-
-        // Рендеринг GPT
-        function renderGpt(gpt) {
-            const container = document.getElementById('gpt-content');
-            
-            container.innerHTML = `
-                <article class="gpt-detail">
-                    <header class="gpt-header">
-                        <div class="gpt-icon-large">${gpt.icon}</div>
-                        <div class="gpt-header-content">
-                            <h1>${gpt.title}</h1>
-                            <p class="gpt-description">${gpt.description}</p>
-                            <div class="gpt-meta">
-                                <time datetime="${gpt.date}">${formatDate(gpt.date)}</time>
-                                <div class="gpt-tags">
-                                    ${gpt.tags.map(tag => 
-                                        `<a href="gpts.html?tag=${tag}" class="tag">#${tag}</a>`
-                                    ).join('')}
-                                </div>
-                            </div>
-                            <a href="${gpt.link}" class="btn-primary btn-large" target="_blank" rel="noopener">
-                                🚀 Спробувати GPT
-                            </a>
-                        </div>
-                    </header>
-
-                    <div class="gpt-content">
-                        ${gpt.content}
-                    </div>
-
-                    <footer class="gpt-footer">
-                        <a href="${gpt.link}" class="btn-primary" target="_blank" rel="noopener">
-                            Відкрити GPT в ChatGPT →
-                        </a>
-                        <a href="gpts.html" class="btn-secondary">
-                            ← Назад до списку
-                        </a>
-                    </footer>
-                </article>
-            `;
-        }
-
-        // Налаштування навігації між GPTs
-        function setupNavigation(gpts, currentSlug) {
-            // Сортуємо так само як на головній сторінці
-            gpts.sort((a, b) => {
-                if (a.featured && !b.featured) return -1;
-                if (!a.featured && b.featured) return 1;
-                return new Date(b.date) - new Date(a.date);
-            });
-
-            const currentIndex = gpts.findIndex(p => p.slug === currentSlug);
-            const prevGpt = gpts[currentIndex - 1];
-            const nextGpt = gpts[currentIndex + 1];
-
-            const navigation = document.querySelector('.post-navigation');
-            const prevLink = document.getElementById('prev-gpt');
-            const nextLink = document.getElementById('next-gpt');
-
-            if (prevGpt || nextGpt) {
-                navigation.style.display = 'flex';
-
-                if (prevGpt) {
-                    prevLink.href = `gpt.html?gpt=${prevGpt.slug}`;
-                    prevLink.textContent = `← ${prevGpt.title}`;
-                    prevLink.style.visibility = 'visible';
-                } else {
-                    prevLink.style.visibility = 'hidden';
-                }
-
-                if (nextGpt) {
-                    nextLink.href = `gpt.html?gpt=${nextGpt.slug}`;
-                    nextLink.textContent = `${nextGpt.title} →`;
-                    nextLink.style.visibility = 'visible';
-                } else {
-                    nextLink.style.visibility = 'hidden';
-                }
-            }
-        }
-
-        // Оновлення meta-тегів
-        function updateMetaTags(gpt) {
-            document.title = `${gpt.title} — GPTs Lab — Олександр Лопацький`;
-            
-            // Оновлюємо description
-            let metaDescription = document.querySelector('meta[name="description"]');
-            if (!metaDescription) {
-                metaDescription = document.createElement('meta');
-                metaDescription.name = 'description';
-                document.head.appendChild(metaDescription);
-            }
-            metaDescription.content = gpt.description;
-        }
-
-        // Показ помилки
-        function showError(message) {
-            const container = document.getElementById('gpt-content');
-            container.innerHTML = `
-                <div class="error-state">
-                    <p>❌ ${message}</p>
-                </div>
-            `;
-        }
-
-        // Форматування дати
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const months = [
-                'січня', 'лютого', 'березня', 'квітня', 'травня', 'червня',
-                'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня'
-            ];
-            return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
-        }
-    </script>
 </body>
 </html>

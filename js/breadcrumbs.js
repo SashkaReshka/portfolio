@@ -20,7 +20,6 @@ function generateBreadcrumbs(options = {}) {
       </div>
   `;
   
-  // Якщо є батьківська сторінка
   if (parentPage && parentUrl) {
     html += `
       <div class="breadcrumb-item">
@@ -30,7 +29,6 @@ function generateBreadcrumbs(options = {}) {
     `;
   }
   
-  // Поточна сторінка (завжди остання)
   if (currentPage) {
     html += `
       <div class="breadcrumb-item">
@@ -41,13 +39,12 @@ function generateBreadcrumbs(options = {}) {
   }
   
   html += `</nav>`;
-  
   return html;
 }
 
 /**
  * Автоматично визначає breadcrumbs на основі URL та контенту
- * @param {Object} customData - Додаткові дані (наприклад, назва проекту з JSON)
+ * @param {Object} customData - Додаткові дані (наприклад, назва елемента з JSON)
  */
 function initBreadcrumbs(customData = {}) {
   const container = document.getElementById('breadcrumbs-container');
@@ -58,12 +55,9 @@ function initBreadcrumbs(customData = {}) {
   
   let breadcrumbsHTML = '';
   
-  // Визначаємо breadcrumbs на основі поточної сторінки
   switch (filename) {
     case 'projects.html':
-      breadcrumbsHTML = generateBreadcrumbs({
-        currentPage: 'Проєкти'
-      });
+      breadcrumbsHTML = generateBreadcrumbs({ currentPage: 'Проєкти' });
       break;
       
     case 'project.html':
@@ -73,11 +67,23 @@ function initBreadcrumbs(customData = {}) {
         parentUrl: 'projects.html'
       });
       break;
+
+    // ✅ ДОДАНО: список GPTs
+    case 'gpts.html':
+      breadcrumbsHTML = generateBreadcrumbs({ currentPage: 'GPTs Lab' });
+      break;
+
+    // ✅ ДОДАНО: детальна сторінка GPT
+    case 'gpt.html':
+      breadcrumbsHTML = generateBreadcrumbs({
+        currentPage: customData.gptTitle || customData.currentPage || 'GPT',
+        parentPage: 'GPTs Lab',
+        parentUrl: 'gpts.html'
+      });
+      break;
       
     case 'blog.html':
-      breadcrumbsHTML = generateBreadcrumbs({
-        currentPage: 'Блог'
-      });
+      breadcrumbsHTML = generateBreadcrumbs({ currentPage: 'Блог' });
       break;
       
     case 'post.html':
@@ -89,13 +95,11 @@ function initBreadcrumbs(customData = {}) {
       break;
       
     default:
-      // Для головної сторінки breadcrumbs не потрібні
       breadcrumbsHTML = '';
   }
   
   container.innerHTML = breadcrumbsHTML;
 }
 
-// Експорт функцій для використання на сторінках
 window.generateBreadcrumbs = generateBreadcrumbs;
 window.initBreadcrumbs = initBreadcrumbs;
