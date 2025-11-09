@@ -88,7 +88,7 @@
     // Завантаження всіх GPTs
     async function loadAllGpts() {
       try {
-        const response = await fetch('data/gpts.json');
+        const response = await fetch('data/gpts/index.json');
         allGpts = await response.json();
         
         // Сортуємо: спочатку featured, потім за датою

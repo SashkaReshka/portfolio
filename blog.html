@@ -88,7 +88,7 @@
     // Завантаження всіх постів
     async function loadAllPosts() {
       try {
-        const response = await fetch('data/posts.json');
+        const response = await fetch('data/posts/index.json');
         allPosts = await response.json();
         
         // Сортуємо пости за датою (новіші спочатку)

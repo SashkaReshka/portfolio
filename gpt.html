@@ -45,7 +45,7 @@
       }
 
       try {
-        const response = await fetch('data/gpts.json');
+        const response = await fetch('data/gpts/index.json');
         if (!response.ok) throw new Error('Не вдалося завантажити дані');
         
         const gpts = await response.json();

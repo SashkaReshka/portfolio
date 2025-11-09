@@ -168,7 +168,7 @@
   <script>
     async function loadFeaturedProjects() {
       try {
-        const response = await fetch('data/projects.json');
+        const response = await fetch('data/projects/index.json');
         const projects = await response.json();
         
         // Фільтруємо вибрані (featured: true)
