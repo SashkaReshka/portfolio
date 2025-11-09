@@ -1,0 +1,14 @@
+{
+  "slug": "telegram-content-plan",
+  "title": "Міні-гайд по контент-плану для Telegram",
+  "date": "2024-08-12",
+  "tags": [
+    "Marketing",
+    "Content",
+    "Telegram"
+  ],
+  "excerpt": "Скелет «теми×формати×цілі» і швидкі приклади.",
+  "content": "<h2>Структура контент-плану</h2><p>Telegram-канал вимагає системного підходу. Матриця «теми × формати × цілі» допомагає створювати різноманітний контент без вигорання.</p><h3>Матриця контенту:</h3><table style='width:100%; border-collapse: collapse; margin: 20px 0;'><tr style='background: var(--card);'><th style='padding:12px; border: 1px solid var(--line);'>Тема</th><th style='padding:12px; border: 1px solid var(--line);'>Формат</th><th style='padding:12px; border: 1px solid var(--line);'>Ціль</th></tr><tr><td style='padding:12px; border: 1px solid var(--line);'>Кейси</td><td style='padding:12px; border: 1px solid var(--line);'>Пост з результатами</td><td style='padding:12px; border: 1px solid var(--line);'>Довіра</td></tr><tr><td style='padding:12px; border: 1px solid var(--line);'>Інструменти</td><td style='padding:12px; border: 1px solid var(--line);'>Огляд/туторіал</td><td style='padding:12px; border: 1px solid var(--line);'>Цінність</td></tr><tr><td style='padding:12px; border: 1px solid var(--line);'>Особисте</td><td style='padding:12px; border: 1px solid var(--line);'>Історія/думка</td><td style='padding:12px; border: 1px solid var(--line);'>Зв'язок</td></tr></table><h3>Частота публікацій:</h3><ul><li>3-5 постів на тиждень — оптимально для особистого бренду</li><li>1-2 пости на день — для продуктового каналу</li><li>Щодня — тільки якщо є команда</li></ul><h3>Формати що працюють:</h3><ol><li><strong>Кейси «до/після»</strong> — показуємо конкретні результати</li><li><strong>Чек-листи</strong> — практична цінність у зручному форматі</li><li><strong>Розбір помилок</strong> — люди люблять вчитись на чужих помилках</li><li><strong>Закулісся</strong> — показуємо процес роботи</li></ol><h3>Інструменти:</h3><ul><li><strong>Notion</strong> — для планування контенту</li><li><strong>Canva</strong> — для швидкого дизайну</li><li><strong>Teletype</strong> — для довгих постів</li></ul><p>Головне правило: <strong>контент-план має бути гнучким</strong>. Якщо з'явилась актуальна тема — публікуй зараз, а не через тиждень за планом.</p>",
+  "readTime": 5,
+  "featured": false
+}

@@ -9,7 +9,7 @@ function getProjectSlug() {
 // Завантаження даних проєкту
 async function loadProject(slug) {
   try {
-    const response = await fetch('data/projects.json');
+    const response = await fetch('data/projects/index.json');
     
     if (!response.ok) {
       throw new Error(`HTTP помилка! статус: ${response.status}`);

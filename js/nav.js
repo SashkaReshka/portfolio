@@ -5,7 +5,7 @@ let projectsData = [];
 // Завантаження даних проєктів
 async function loadProjectsData() {
   try {
-    const response = await fetch('data/projects.json');
+    const response = await fetch('data/projects/index.json');
     
     if (!response.ok) {
       throw new Error(`HTTP помилка! статус: ${response.status}`);

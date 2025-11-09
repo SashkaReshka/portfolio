@@ -9,7 +9,7 @@ function getPostSlug() {
 // Завантаження даних поста
 async function loadPost(slug) {
   try {
-    const response = await fetch('data/posts.json');
+    const response = await fetch('data/posts/index.json');
     
     if (!response.ok) {
       throw new Error(`HTTP помилка! статус: ${response.status}`);

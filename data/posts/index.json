@@ -1,0 +1,41 @@
+[
+  {
+    "slug": "calculator-design-guide",
+    "title": "Як я проєктую калькулятори для клієнтів",
+    "date": "2024-10-18",
+    "tags": [
+      "UX",
+      "JavaScript",
+      "Product"
+    ],
+    "excerpt": "Показав підхід, стек і правила, які економлять тижні на проді.",
+    "readTime": 8,
+    "featured": true
+  },
+  {
+    "slug": "ups-selection-guide",
+    "title": "Гайд: як вибрати ІБП під задачі офісу",
+    "date": "2024-09-03",
+    "tags": [
+      "Energy",
+      "Guide",
+      "B2B"
+    ],
+    "excerpt": "Проста логіка для не-електриків і шаблони для сайту.",
+    "readTime": 6,
+    "featured": true
+  },
+  {
+    "slug": "telegram-content-plan",
+    "title": "Міні-гайд по контент-плану для Telegram",
+    "date": "2024-08-12",
+    "tags": [
+      "Marketing",
+      "Content",
+      "Telegram"
+    ],
+    "excerpt": "Скелет «теми×формати×цілі» і швидкі приклади.",
+    "readTime": 5,
+    "featured": false
+  }
+]

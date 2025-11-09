@@ -1,0 +1,16 @@
+{
+  "slug": "poe-planner",
+  "title": "PoE Planner",
+  "role": "Product",
+  "description": "Підбір PoE-комутатора під сумарне навантаження IP-камер.",
+  "content": "<h2>PoE Planning Tool</h2><p>Калькулятор для підбору комутатора з урахуванням енергоспоживання IP-камер.</p><h3>Функції:</h3><ul><li>Розрахунок сумарної потужності</li><li>Підбір PoE-стандарту</li><li>Рекомендації по комутаторах</li></ul>",
+  "tags": [
+    "CCTV",
+    "PoE",
+    "Network"
+  ],
+  "date": "2024-07-15",
+  "link": "#",
+  "thumbnail": "",
+  "featured": false
+}
