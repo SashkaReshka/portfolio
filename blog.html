@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Блог — Олександр</title>
+  <meta name="description" content="Статті про UX, JavaScript, енергетику, маркетинг та продуктовий дизайн">
+  <meta name="color-scheme" content="light dark" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/gpts-styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside id="navigation"></aside>
+
+    <main>
+      <div class="container">
+        <section class="section">
+          <h1>Блог</h1>
+          <p class="meta">Статті про UX, JavaScript, енергетику та продуктовий дизайн</p>
+          
+          <!-- Пошук та фільтри -->
+          <div class="search-filters">
+            <!-- Пошук -->
+            <div class="search-box">
+              <input 
+                type="search" 
+                id="search-input" 
+                class="search-field" 
+                placeholder="🔍 Пошук статей..."
+                aria-label="Пошук статей"
+              />
+            </div>
+            
+            <!-- Фільтри по тегах -->
+            <div class="filter-tags" id="filter-tags">
+              <button class="filter-tag active" data-tag="all" onclick="filterByTag('all')">
+                Всі
+              </button>
+              <!-- Інші теги додадуться через JS -->
+            </div>
+          </div>
+          
+          <!-- Результати -->
+          <div class="results-info" id="results-info">
+            Показано: <strong id="results-count">0</strong> статей
+          </div>
+          
+          <!-- Список постів -->
+          <div id="posts-list" class="posts-list">
+            <!-- Картки постів завантажаться через JS -->
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <p>Завантаження постів...</p>
+            </div>
+          </div>
+          
+          <!-- Повідомлення якщо нічого не знайдено -->
+          <div id="no-results" class="no-results" style="display: none;">
+            <h3>😔 Нічого не знайдено</h3>
+            <p>Спробуйте інший запит або оберіть інший тег</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/nav.js"></script>
+  
+  <script>
+    // Глобальні змінні
+    let allPosts = [];
+    let currentTag = 'all';
+    let currentSearch = '';
+    
+    // Завантаження всіх постів
+    async function loadAllPosts() {
+      try {
+        const response = await fetch('data/posts.json');
+        allPosts = await response.json();
+        
+        // Сортуємо пости за датою (новіші спочатку)
+        allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // Генеруємо фільтри по тегах
+        generateTagFilters();
+        
+        // Показуємо пости
+        displayPosts();
+        
+        // Підключаємо пошук
+        setupSearch();
+        
+      } catch (error) {
+        console.error('Помилка завантаження постів:', error);
+        document.getElementById('posts-list').innerHTML = `
+          <div class="error-message">
+            <p>Не вдалося завантажити пости</p>
+          </div>
+        `;
+      }
+    }
+    
+    // Генерація кнопок фільтрів по тегах
+    function generateTagFilters() {
+      const tags = window.utils.getAllTags(allPosts);
+      const container = document.getElementById('filter-tags');
+      
+      // Кнопка "Всі" вже є в HTML
+      
+      // Додаємо кнопки для кожного тегу
+      tags.forEach(tag => {
+        const button = document.createElement('button');
+        button.className = 'filter-tag';
+        button.dataset.tag = tag;
+        button.textContent = tag;
+        button.onclick = () => filterByTag(tag);
+        container.appendChild(button);
+      });
+    }
+    
+    // Фільтрація по тегу
+    function filterByTag(tag) {
+      currentTag = tag;
+      
+      // Оновлюємо активну кнопку
+      document.querySelectorAll('.filter-tag').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tag === tag);
+      });
+      
+      displayPosts();
+    }
+    
+    // Налаштування пошуку
+    function setupSearch() {
+      const searchInput = document.getElementById('search-input');
+      
+      // Використовуємо debounce для оптимізації
+      const debouncedSearch = window.utils.debounce((query) => {
+        currentSearch = query;
+        
+        // Якщо є пошуковий запит — скидаємо фільтр тегів на "Всі"
+        if (query.trim() !== '') {
+          currentTag = 'all';
+          document.querySelectorAll('.filter-tag').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tag === 'all');
+          });
+        }
+        
+        displayPosts();
+      }, 300);
+      
+      searchInput.addEventListener('input', (e) => {
+        debouncedSearch(e.target.value);
+      });
+    }
+    
+    // Відображення постів з фільтрацією
+    function displayPosts() {
+      const list = document.getElementById('posts-list');
+      const noResults = document.getElementById('no-results');
+      const resultsCount = document.getElementById('results-count');
+      
+      // Фільтруємо по тегу
+      let filteredPosts = currentTag === 'all' 
+        ? allPosts 
+        : window.utils.filterByTag(allPosts, currentTag);
+      
+      // Фільтруємо по пошуковому запиту
+      if (currentSearch) {
+        filteredPosts = window.utils.searchItems(
+          filteredPosts, 
+          currentSearch,
+          ['title', 'excerpt', 'tags', 'content']
+        );
+      }
+      
+      // Оновлюємо лічильник
+      resultsCount.textContent = filteredPosts.length;
+      
+      // Якщо нічого не знайдено
+      if (filteredPosts.length === 0) {
+        list.style.display = 'none';
+        noResults.style.display = 'block';
+        return;
+      }
+      
+      // Показуємо результати
+      list.style.display = 'flex';
+      noResults.style.display = 'none';
+      list.innerHTML = '';
+      
+      filteredPosts.forEach(post => {
+        const card = document.createElement('a');
+        card.className = 'post-card';
+        card.href = `post.html?post=${post.slug}`;
+        card.style.display = 'block';
+        card.style.color = 'inherit';
+        
+        // Формуємо теги
+        const tagsHTML = post.tags && post.tags.length > 0
+          ? post.tags.map(tag => `<span class="chip">#${tag}</span>`).join(' ')
+          : '';
+        
+        // Формуємо мета-інформацію
+        const metaParts = [];
+        if (post.date) {
+          metaParts.push(window.utils.formatDate(post.date));
+        }
+        if (post.readTime) {
+          metaParts.push(`${post.readTime} хв читання`);
+        }
+        const metaHTML = metaParts.length > 0 
+          ? `<div class="post-meta">${metaParts.join(' • ')}</div>`
+          : '';
+        
+        card.innerHTML = `
+          <h3>${highlightText(post.title, currentSearch)}</h3>
+          ${metaHTML}
+          ${tagsHTML ? `<div style="margin: 8px 0;">${tagsHTML}</div>` : ''}
+          <p class="post-excerpt">${highlightText(post.excerpt, currentSearch)}</p>
+          <span class="read-more">Читати далі →</span>
+        `;
+        
+        list.appendChild(card);
+      });
+    }
+    
+    // Підсвічування знайденого тексту
+    function highlightText(text, query) {
+      if (!query || query.trim() === '') return text;
+      
+      const regex = new RegExp(`(${query})`, 'gi');
+      return text.replace(regex, '<mark>$1</mark>');
+    }
+    
+    // Запуск
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadAllPosts);
+    } else {
+      loadAllPosts();
+    }
+  </script>
+</body>
+</html>

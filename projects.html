@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Проєкти — Олександр</title>
+  <meta name="description" content="Портфоліо проєктів: калькулятори, веб-додатки, інструменти">
+  <meta name="color-scheme" content="light dark" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/gpts-styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside id="navigation"></aside>
+
+    <main>
+      <div class="container">
+        <section class="section">
+          <h1>Проєкти</h1>
+          <p class="meta">Інструменти та веб-додатки для B2B-клієнтів</p>
+          
+          <!-- Пошук та фільтри -->
+          <div class="search-filters">
+            <!-- Пошук -->
+            <div class="search-box">
+              <input 
+                type="search" 
+                id="search-input" 
+                class="search-field" 
+                placeholder="🔍 Пошук проєктів..."
+                aria-label="Пошук проєктів"
+              />
+            </div>
+            
+            <!-- Фільтри по тегах -->
+            <div class="filter-tags" id="filter-tags">
+              <button class="filter-tag active" data-tag="all" onclick="filterByTag('all')">
+                Всі
+              </button>
+              <!-- Інші теги додадуться через JS -->
+            </div>
+          </div>
+          
+          <!-- Результати -->
+          <div class="results-info" id="results-info">
+            Показано: <strong id="results-count">0</strong> проєктів
+          </div>
+          
+          <!-- Сітка проєктів -->
+          <div id="projects-grid" class="grid cols-3">
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <p>Завантаження проєктів...</p>
+            </div>
+          </div>
+          
+          <!-- Повідомлення якщо нічого не знайдено -->
+          <div id="no-results" class="no-results" style="display: none;">
+            <h3>😔 Нічого не знайдено</h3>
+            <p>Спробуйте інший запит або оберіть інший тег</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/nav.js"></script>
+  
+  <script>
+    // Глобальні змінні
+    let allProjects = [];
+    let currentTag = 'all';
+    let currentSearch = '';
+    
+    // Завантаження всіх проєктів
+    async function loadAllProjects() {
+      try {
+        const response = await fetch('data/projects.json');
+        allProjects = await response.json();
+        
+        // Генеруємо фільтри по тегах
+        generateTagFilters();
+        
+        // Показуємо проєкти
+        displayProjects();
+        
+        // Підключаємо пошук
+        setupSearch();
+        
+      } catch (error) {
+        console.error('Помилка завантаження проєктів:', error);
+        document.getElementById('projects-grid').innerHTML = `
+          <div class="error-message">
+            <p>Не вдалося завантажити проєкти</p>
+          </div>
+        `;
+      }
+    }
+    
+    // Генерація кнопок фільтрів по тегах
+    function generateTagFilters() {
+      const tags = window.utils.getAllTags(allProjects);
+      const container = document.getElementById('filter-tags');
+      
+      // Кнопка "Всі" вже є в HTML
+      
+      // Додаємо кнопки для кожного тегу
+      tags.forEach(tag => {
+        const button = document.createElement('button');
+        button.className = 'filter-tag';
+        button.dataset.tag = tag;
+        button.textContent = tag;
+        button.onclick = () => filterByTag(tag);
+        container.appendChild(button);
+      });
+    }
+    
+    // Фільтрація по тегу
+    function filterByTag(tag) {
+      currentTag = tag;
+      
+      // Оновлюємо активну кнопку
+      document.querySelectorAll('.filter-tag').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tag === tag);
+      });
+      
+      displayProjects();
+    }
+    
+    
+    // Налаштування пошуку
+	function setupSearch() {
+	const searchInput = document.getElementById('search-input');
+  
+	// Використовуємо debounce для оптимізації
+	const debouncedSearch = window.utils.debounce((query) => {
+    currentSearch = query;
+    
+    // Якщо є пошуковий запит — скидаємо фільтр тегів на "Всі"
+    if (query.trim() !== '') {
+      currentTag = 'all';
+      document.querySelectorAll('.filter-tag').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tag === 'all');
+      });
+    }
+    
+    displayProjects();
+  }, 300);
+  
+  searchInput.addEventListener('input', (e) => {
+    debouncedSearch(e.target.value);
+  });
+}
+    
+    // Відображення проєктів з фільтрацією
+    function displayProjects() {
+      const grid = document.getElementById('projects-grid');
+      const noResults = document.getElementById('no-results');
+      const resultsCount = document.getElementById('results-count');
+      
+      // Фільтруємо по тегу
+      let filteredProjects = currentTag === 'all' 
+        ? allProjects 
+        : window.utils.filterByTag(allProjects, currentTag);
+      
+      // Фільтруємо по пошуковому запиту
+      if (currentSearch) {
+        filteredProjects = window.utils.searchItems(
+          filteredProjects, 
+          currentSearch,
+          ['title', 'description', 'tags', 'role']
+        );
+      }
+      
+      // Оновлюємо лічильник
+      resultsCount.textContent = filteredProjects.length;
+      
+      // Якщо нічого не знайдено
+      if (filteredProjects.length === 0) {
+        grid.style.display = 'none';
+        noResults.style.display = 'block';
+        return;
+      }
+      
+      // Показуємо результати
+      grid.style.display = 'grid';
+      noResults.style.display = 'none';
+      grid.innerHTML = '';
+      
+      filteredProjects.forEach(project => {
+        const card = document.createElement('a');
+        card.className = 'card';
+        card.href = `project.html?project=${project.slug}`;
+        
+        card.innerHTML = `
+          ${project.thumbnail ? 
+            `<div class="thumb" style="background-image: url('${project.thumbnail}'); background-size: cover; background-position: center;"></div>` :
+            `<div class="thumb"></div>`
+          }
+          <div class="card-body">
+            <h3>${highlightText(project.title, currentSearch)}</h3>
+            <div class="meta">${project.role}</div>
+            <p style="margin: 8px 0 0; color: var(--muted); font-size: 14px;">
+              ${highlightText(project.description, currentSearch)}
+            </p>
+            ${project.tags && project.tags.length > 0 ? 
+              `<div class="tags" style="margin-top: 12px;">
+                ${project.tags.slice(0, 3).map(tag => `<span class="chip">#${tag}</span>`).join(' ')}
+              </div>` : 
+              ''
+            }
+          </div>
+        `;
+        
+        grid.appendChild(card);
+      });
+    }
+    
+    // Підсвічування знайденого тексту
+    function highlightText(text, query) {
+      if (!query || query.trim() === '') return text;
+      
+      const regex = new RegExp(`(${query})`, 'gi');
+      return text.replace(regex, '<mark>$1</mark>');
+    }
+    
+    // Запуск
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadAllProjects);
+    } else {
+      loadAllProjects();
+    }
+  </script>
+</body>
+</html>

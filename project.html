@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Проєкт — Олександр</title>
+  <meta name="description" content="Проєкт з портфоліо Олександра">
+  <meta name="color-scheme" content="light dark" />
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Проєкт — Олександр" />
+  <meta property="og:description" content="Проєкт з портфоліо Олександра" />
+  
+  <!-- Стилі -->
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/gpts-styles.css">
+</head>
+<body>
+  <div class="layout">
+    <!-- Навігація (завантажиться через nav.js) -->
+    <aside id="navigation">
+      <div class="loading-state" style="padding: 40px 20px;">
+        <div class="spinner"></div>
+        <p style="font-size: 13px; color: var(--muted);">Завантаження...</p>
+      </div>
+    </aside>
+
+    <!-- Основний контент -->
+    <main>
+      <div class="container" id="project-content">
+        <!-- Контент завантажиться через project-loader.js -->
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Завантаження проєкту...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- JavaScript модулі -->
+  <script src="js/utils.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/project-loader.js"></script>
+</body>
+</html>

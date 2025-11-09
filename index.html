@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Олександр — блог-портфоліо</title>
+  <meta name="description" content="Проєкти, статті, контакти. Чистий мінімалізм, без залежностей.">
+  <meta name="color-scheme" content="light dark" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/gpts-styles.css">
+</head>
+<body>
+  <div class="layout">
+    <aside id="navigation"></aside>
+
+    <main>
+      <div class="container">
+        <!-- Hero секція -->
+        <section class="hero" id="about">
+          <div class="hero-card">
+            <span class="pill">🔧 В роботі: калькулятори, лендінги, UI-системи</span>
+            <h2>Привіт! Я Олександр — збираю практичні продукти та інтерфейси.</h2>
+            <p>Фокус на швидкому шляху до цінності: прототип → перевірка → мейджор-реліз. Працюю з JS/TS, чистим HTML/CSS, React/Next, простими Node/Python-бекендами. Теми: відеоспостереження, енергія, e-commerce-інструменти, маркетингові GPT/процеси.</p>
+          </div>
+          <div class="hero-card">
+            <div class="thumb" aria-hidden="true"></div>
+            <p class="meta">Міні-превʼю — замініть на свою обкладинку (16:9)</p>
+          </div>
+        </section>
+
+        <!-- Вибрані проєкти -->
+        <section class="section" id="projects">
+          <h2>Вибрані проєкти</h2>
+          <div id="featured-projects" class="grid cols-3">
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <p>Завантаження...</p>
+            </div>
+          </div>
+          <div style="margin-top: 24px; text-align: center;">
+            <a href="projects.html" class="btn btn-accent">Всі проєкти →</a>
+          </div>
+        </section>
+
+        <!-- Контакти -->
+<section class="section" id="contact">
+  <h2>Контакти</h2>
+  <p class="meta">Є питання або пропозиція? Напишіть мені!</p>
+  
+  <div class="contact-grid">
+    <!-- Форма -->
+    <div class="card card-body">
+      <form id="contact-form" class="contact-form">
+        <div class="form-group">
+          <label for="name">Ім'я *</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            class="input" 
+            placeholder="Ваше ім'я"
+            required
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            class="input" 
+            placeholder="your@email.com"
+            required
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="subject">Тема</label>
+          <input 
+            type="text" 
+            id="subject" 
+            name="subject" 
+            class="input" 
+            placeholder="Про що хочете поговорити?"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="message">Повідомлення *</label>
+          <textarea 
+            id="message" 
+            name="message" 
+            class="input" 
+            placeholder="Ваше повідомлення..."
+            rows="5"
+            required
+          ></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-accent">
+          <span class="btn-text">Відправити</span>
+          <span class="btn-loading" style="display: none;">Відправка...</span>
+        </button>
+        
+        <div id="form-message" class="form-message" style="display: none;"></div>
+      </form>
+    </div>
+    
+    <!-- Контактна інформація -->
+    <div>
+      <div class="card card-body">
+        <h3 style="margin: 0 0 16px;">Швидкі контакти</h3>
+        
+        <div class="contact-info">
+          <div class="contact-item">
+            <span class="contact-icon">📧</span>
+            <div>
+              <div class="contact-label">Email</div>
+              <a href="mailto:your@email.com" class="contact-value">your@email.com</a>
+            </div>
+          </div>
+          
+          <div class="contact-item">
+            <span class="contact-icon">💼</span>
+            <div>
+              <div class="contact-label">LinkedIn</div>
+              <a href="#" target="_blank" class="contact-value">linkedin.com/in/yourname</a>
+            </div>
+          </div>
+          
+          <div class="contact-item">
+            <span class="contact-icon">✈️</span>
+            <div>
+              <div class="contact-label">Telegram</div>
+              <a href="#" target="_blank" class="contact-value">@yourname</a>
+            </div>
+          </div>
+          
+          <div class="contact-item">
+            <span class="contact-icon">📱</span>
+            <div>
+              <div class="contact-label">GitHub</div>
+              <a href="#" target="_blank" class="contact-value">github.com/yourname</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card card-body" style="margin-top: 20px;">
+        <h3 style="margin: 0 0 12px;">Час відповіді</h3>
+        <p style="margin: 0; color: var(--muted); font-size: 14px;">
+          Зазвичай відповідаю протягом 24 годин у робочі дні. Якщо питання термінове — пишіть в Telegram.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/nav.js"></script>
+  
+  <!-- Завантаження вибраних проєктів -->
+  <script>
+    async function loadFeaturedProjects() {
+      try {
+        const response = await fetch('data/projects.json');
+        const projects = await response.json();
+        
+        // Фільтруємо вибрані (featured: true)
+        const featured = projects.filter(p => p.featured);
+        
+        const grid = document.getElementById('featured-projects');
+        grid.innerHTML = '';
+        
+        featured.forEach(project => {
+          const card = document.createElement('a');
+          card.className = 'card';
+          card.href = `project.html?project=${project.slug}`;
+          
+          card.innerHTML = `
+            <div class="thumb"></div>
+            <div class="card-body">
+              <h3>${project.title}</h3>
+              <div class="meta">${project.role}</div>
+              <p style="margin: 8px 0 0; color: var(--muted); font-size: 14px;">${project.description}</p>
+            </div>
+          `;
+          
+          grid.appendChild(card);
+        });
+      } catch (error) {
+        console.error('Помилка:', error);
+      }
+    }
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadFeaturedProjects);
+    } else {
+      loadFeaturedProjects();
+    }
+  </script>
+  <!-- JavaScript для форми контактів -->
+  <script>
+    // Обробка форми контактів
+    document.getElementById('contact-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const form = e.target;
+      const formMessage = document.getElementById('form-message');
+      const btnText = form.querySelector('.btn-text');
+      const btnLoading = form.querySelector('.btn-loading');
+      const submitBtn = form.querySelector('button[type="submit"]');
+      
+      // Показуємо стан завантаження
+      submitBtn.disabled = true;
+      btnText.style.display = 'none';
+      btnLoading.style.display = 'inline';
+      formMessage.style.display = 'none';
+      
+      // Збираємо дані форми (Formspree очікує стандартні назви полів)
+      const formData = new FormData();
+      formData.append('name', form.name.value);
+      formData.append('email', form.email.value);
+      formData.append('subject', form.subject.value || 'Нове повідомлення з сайту');
+      formData.append('message', form.message.value);
+      
+      try {
+        // Відправка на Formspree
+        const response = await fetch('https://formspree.io/f/mqawzqvo', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          // Успіх
+          formMessage.className = 'form-message form-message-success';
+          formMessage.textContent = '✅ Дякую! Ваше повідомлення відправлено. Зв\'яжусь найближчим часом.';
+          formMessage.style.display = 'block';
+          
+          // Очищуємо форму
+          form.reset();
+          
+          console.log('✅ Форма успішно відправлена через Formspree');
+        } else {
+          // Помилка від сервера
+          const data = await response.json();
+          throw new Error(data.error || 'Помилка відправки');
+        }
+        
+      } catch (error) {
+        // Помилка
+        formMessage.className = 'form-message form-message-error';
+        formMessage.textContent = '❌ Щось пішло не так. Спробуйте ще раз або напишіть на email.';
+        formMessage.style.display = 'block';
+        
+        console.error('❌ Помилка відправки:', error);
+      } finally {
+        // Повертаємо кнопку в нормальний стан
+        submitBtn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
