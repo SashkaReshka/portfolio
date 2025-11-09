@@ -1,0 +1,101 @@
+// breadcrumbs.js - Генерація хлібних крихт для навігації
+
+/**
+ * Генерує HTML для хлібних крихт на основі поточної сторінки
+ * @param {Object} options - Опції для налаштування breadcrumbs
+ * @param {string} options.currentPage - Назва поточної сторінки
+ * @param {string} options.parentPage - Назва батьківської сторінки (опціонально)
+ * @param {string} options.parentUrl - URL батьківської сторінки (опціонально)
+ * @returns {string} HTML для breadcrumbs
+ */
+function generateBreadcrumbs(options = {}) {
+  const { currentPage, parentPage, parentUrl } = options;
+  
+  let html = `
+    <nav class="breadcrumbs" aria-label="Навігаційні крихти">
+      <div class="breadcrumb-item">
+        <a href="index.html" class="breadcrumb-link breadcrumb-home" title="На головну">
+          🏠
+        </a>
+      </div>
+  `;
+  
+  // Якщо є батьківська сторінка
+  if (parentPage && parentUrl) {
+    html += `
+      <div class="breadcrumb-item">
+        <span class="breadcrumb-separator">›</span>
+        <a href="${parentUrl}" class="breadcrumb-link">${parentPage}</a>
+      </div>
+    `;
+  }
+  
+  // Поточна сторінка (завжди остання)
+  if (currentPage) {
+    html += `
+      <div class="breadcrumb-item">
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">${currentPage}</span>
+      </div>
+    `;
+  }
+  
+  html += `</nav>`;
+  
+  return html;
+}
+
+/**
+ * Автоматично визначає breadcrumbs на основі URL та контенту
+ * @param {Object} customData - Додаткові дані (наприклад, назва проекту з JSON)
+ */
+function initBreadcrumbs(customData = {}) {
+  const container = document.getElementById('breadcrumbs-container');
+  if (!container) return;
+  
+  const pathname = window.location.pathname;
+  const filename = pathname.substring(pathname.lastIndexOf('/') + 1);
+  
+  let breadcrumbsHTML = '';
+  
+  // Визначаємо breadcrumbs на основі поточної сторінки
+  switch (filename) {
+    case 'projects.html':
+      breadcrumbsHTML = generateBreadcrumbs({
+        currentPage: 'Проєкти'
+      });
+      break;
+      
+    case 'project.html':
+      breadcrumbsHTML = generateBreadcrumbs({
+        currentPage: customData.projectTitle || 'Проєкт',
+        parentPage: 'Проєкти',
+        parentUrl: 'projects.html'
+      });
+      break;
+      
+    case 'blog.html':
+      breadcrumbsHTML = generateBreadcrumbs({
+        currentPage: 'Блог'
+      });
+      break;
+      
+    case 'post.html':
+      breadcrumbsHTML = generateBreadcrumbs({
+        currentPage: customData.postTitle || 'Стаття',
+        parentPage: 'Блог',
+        parentUrl: 'blog.html'
+      });
+      break;
+      
+    default:
+      // Для головної сторінки breadcrumbs не потрібні
+      breadcrumbsHTML = '';
+  }
+  
+  container.innerHTML = breadcrumbsHTML;
+}
+
+// Експорт функцій для використання на сторінках
+window.generateBreadcrumbs = generateBreadcrumbs;
+window.initBreadcrumbs = initBreadcrumbs;

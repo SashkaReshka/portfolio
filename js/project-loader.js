@@ -158,6 +158,11 @@ async function initProjectPage() {
   try {
     const project = await loadProject(slug);
     renderProject(project);
+    
+    // Оновлюємо breadcrumbs з назвою проєкту
+    if (window.initBreadcrumbs) {
+      window.initBreadcrumbs({ projectTitle: project.title });
+    }
   } catch (error) {
     showError('Проєкт не знайдено');
   }

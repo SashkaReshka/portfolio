@@ -14,7 +14,6 @@
   
   <!-- Стилі -->
   <link rel="stylesheet" href="css/main.css" />
-  <link rel="stylesheet" href="css/gpts-styles.css">
 </head>
 <body>
   <div class="layout">
@@ -28,11 +27,17 @@
 
     <!-- Основний контент -->
     <main>
-      <div class="container" id="project-content">
-        <!-- Контент завантажиться через project-loader.js -->
-        <div class="loading-state">
-          <div class="spinner"></div>
-          <p>Завантаження проєкту...</p>
+      <div class="container">
+        <!-- Хлібні крихти -->
+        <div id="breadcrumbs-container"></div>
+        
+        <!-- Контент проєкту -->
+        <div id="project-content">
+          <!-- Контент завантажиться через project-loader.js -->
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Завантаження проєкту...</p>
+          </div>
         </div>
       </div>
     </main>
@@ -42,6 +47,7 @@
   <script src="js/utils.js"></script>
   <script src="js/theme.js"></script>
   <script src="js/nav.js"></script>
+  <script src="js/breadcrumbs.js"></script>
   <script src="js/project-loader.js"></script>
 </body>
 </html>
