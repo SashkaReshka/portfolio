@@ -45,19 +45,12 @@
       }
 
       try {
-        const response = await fetch('data/gpts/index.json');
-        if (!response.ok) throw new Error('Не вдалося завантажити дані');
-        
-        const gpts = await response.json();
-        const gpt = gpts.find(p => p.slug === gptSlug);
-        
-        if (!gpt) {
-          showError('GPT не знайдено. <a href="gpts.html">Повернутися до списку</a>');
-          return;
-        }
-        
-        renderGpt(gpt);
-        updateMetaTags(gpt);
+        const resp = await fetch(`data/gpts/${gptSlug}.json`);
+if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+const gpt = await resp.json();
+
+renderGpt(gpt);
+updateMetaTags(gpt);
 
         // 🧭 Ініціалізуємо хлібні крихти
         if (window.initBreadcrumbs) {

@@ -9,19 +9,13 @@ function getProjectSlug() {
 // Завантаження даних проєкту
 async function loadProject(slug) {
   try {
-    const response = await fetch('data/projects/index.json');
+    const response = await fetch(`data/projects/${slug}.json`);
     
     if (!response.ok) {
       throw new Error(`HTTP помилка! статус: ${response.status}`);
     }
-    
-    const projects = await response.json();
-    const project = projects.find(p => p.slug === slug);
-    
-    if (!project) {
-      throw new Error('Проєкт не знайдено');
-    }
-    
+
+    const project = await response.json();
     return project;
   } catch (error) {
     console.error('Помилка завантаження проєкту:', error);
