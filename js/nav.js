@@ -24,7 +24,23 @@ function generateNavHTML(projects) {
   
   return `
     <div class="aside-inner">
-      <!-- Логотип і tagline -->
+      <!-- Мобільний хедер: логотип зліва + кнопка справа -->
+      <div class="mobile-header">
+        <a href="index.html" class="logo-link-mobile">
+          <img 
+            src="assets/images/logo.png" 
+            alt="Логотип" 
+            class="logo-image-mobile"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <div class="logo-placeholder-mobile">
+            <div class="logo-initial">О</div>
+          </div>
+        </a>
+        <a class="btn btn-accent btn-mobile-contact" href="index.html#contact">Зв'язатися</a>
+      </div>
+      
+      <!-- Логотип і tagline (десктоп) -->
       <div class="brand">
         <a href="index.html" class="logo-link">
           <img 
@@ -50,15 +66,26 @@ function generateNavHTML(projects) {
         <a class="nav-link" href="gpts.html">🤖 <span>GPTs Lab</span></a>
         
         <a class="nav-link" href="blog.html">📝 <span>Блог</span></a>
+        
+        <!-- Переключатель теми в меню (тільки мобільні) -->
+        <div class="theme-toggle-mobile">
+          <div class="nav-title">Тема</div>
+          <div class="theme-buttons">
+            <button class="btn theme-btn" id="lightThemeBtnMobile" title="Світла тема" 
+                    onclick="setTheme('light')">☀️ Світла</button>
+            <button class="btn theme-btn" id="darkThemeBtnMobile" title="Темна тема" 
+                    onclick="setTheme('dark')">🌙 Темна</button>
+          </div>
+        </div>
       </nav>
       
       <div class="grow"></div>
       
-      <!-- Футер -->
+      <!-- Футер (десктоп) -->
       <div class="cta">
         <a class="btn btn-accent" href="index.html#contact">Зв'язатися</a>
         
-        <!-- Переключатель теми (компактний) -->
+        <!-- Переключатель теми (компактний, десктоп) -->
         <div class="theme-toggle-compact">
           <button class="btn theme-btn" id="lightThemeBtn" title="Світла тема" aria-label="Світла тема" 
                   onclick="setTheme('light')">☀️</button>
@@ -68,6 +95,11 @@ function generateNavHTML(projects) {
         
         <div class="meta">© <span id="year"></span> • Зроблено без залежностей</div>
       </div>
+      
+      <!-- Рік внизу (тільки мобільні) -->
+      <div class="mobile-footer">
+        <div class="meta">© <span id="year-mobile"></span> • Зроблено без залежностей</div>
+      </div>
     </div>
   `;
 }
@@ -76,7 +108,7 @@ function generateNavHTML(projects) {
 function addMobileNavToggle() {
   if (window.innerWidth <= 860) {
     const nav = document.querySelector('nav');
-    const navContainer = document.querySelector('.aside-inner');
+    const mobileHeader = document.querySelector('.mobile-header');
     
     // Створюємо кнопку якщо її ще немає
     if (!document.querySelector('.nav-toggle')) {
@@ -88,15 +120,11 @@ function addMobileNavToggle() {
         toggle.classList.toggle('open');
       };
       
-      // Вставляємо перед nav
-      navContainer.insertBefore(toggle, nav);
+      // Вставляємо після мобільного хедера
+      mobileHeader.after(toggle);
     }
   }
 }
-
-// Викликати після initNavigation()
-window.addEventListener('resize', addMobileNavToggle);
-addMobileNavToggle();
 
 // Підсвічування активної сторінки
 function highlightActivePage() {
@@ -131,17 +159,25 @@ async function initNavigation() {
   const navHTML = generateNavHTML(projects);
   navContainer.innerHTML = navHTML;
   
-  // Оновлюємо рік у футері
+  // Оновлюємо рік у футері (обидва)
   const yearElement = document.getElementById('year');
-  if (yearElement) {
-    yearElement.textContent = new Date().getFullYear();
-  }
+  const yearElementMobile = document.getElementById('year-mobile');
+  const currentYear = new Date().getFullYear();
+  
+  if (yearElement) yearElement.textContent = currentYear;
+  if (yearElementMobile) yearElementMobile.textContent = currentYear;
   
   // Підсвічуємо активну сторінку
   highlightActivePage();
   
-  // Оновлюємо стан кнопок теми
+  // Оновлюємо стан кнопок теми (десктоп і мобільні)
   updateThemeButtons();
+  
+  // Додаємо мобільну кнопку меню
+  addMobileNavToggle();
+  
+  // При зміні розміру вікна
+  window.addEventListener('resize', addMobileNavToggle);
 }
 
 // Запуск при завантаженні DOM

@@ -28,20 +28,35 @@ function toggleTheme() {
   applyTheme(isDark ? 'light' : 'dark');
 }
 
-// Оновлення стану кнопок теми
+// Оновлення стану кнопок теми (десктоп і мобільні)
 function updateThemeButtons() {
   const isDark = document.documentElement.classList.contains('dark');
+  
+  // Десктопні кнопки
   const lightBtn = document.getElementById('lightThemeBtn');
   const darkBtn = document.getElementById('darkThemeBtn');
   
   if (lightBtn && darkBtn) {
-    // Активна кнопка має клас 'active'
     if (isDark) {
       lightBtn.classList.remove('active');
       darkBtn.classList.add('active');
     } else {
       lightBtn.classList.add('active');
       darkBtn.classList.remove('active');
+    }
+  }
+  
+  // Мобільні кнопки
+  const lightBtnMobile = document.getElementById('lightThemeBtnMobile');
+  const darkBtnMobile = document.getElementById('darkThemeBtnMobile');
+  
+  if (lightBtnMobile && darkBtnMobile) {
+    if (isDark) {
+      lightBtnMobile.classList.remove('active');
+      darkBtnMobile.classList.add('active');
+    } else {
+      lightBtnMobile.classList.add('active');
+      darkBtnMobile.classList.remove('active');
     }
   }
 }
