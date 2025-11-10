@@ -19,8 +19,8 @@
 
       <div class="container">
         <section class="section">
-          <h1>Блог</h1>
-          <p class="meta">Статті про ЮИКС, JavaScript, енергетику та продуктовий дизайн</p>
+          <h1>📝 Блог</h1>
+          <p class="meta">Статті про UX, JavaScript, енергетику, маркетинг та продуктовий дизайн</p>
           
           <!-- Пошук та фільтри -->
           <div class="search-filters">
@@ -49,8 +49,8 @@
             Показано: <strong id="results-count">0</strong> статей
           </div>
           
-          <!-- Список постів -->
-          <div id="posts-list" class="posts-list">
+          <!-- Сітка постів -->
+          <div id="posts-grid" class="grid cols-3">
             <div class="loading-state">
               <div class="spinner"></div>
               <p>Завантаження постів...</p>
@@ -91,8 +91,12 @@
         const response = await fetch('data/posts/index.json');
         allPosts = await response.json();
         
-        // Сортуємо пости за датою (новіші спочатку)
-        allPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Сортуємо: спочатку featured, потім за датою (новіші спочатку)
+        allPosts.sort((a, b) => {
+          if (a.featured && !b.featured) return -1;
+          if (!a.featured && b.featured) return 1;
+          return new Date(b.date) - new Date(a.date);
+        });
         
         // Генеруємо фільтри по тегах
         generateTagFilters();
@@ -105,7 +109,7 @@
         
       } catch (error) {
         console.error('Помилка завантаження постів:', error);
-        document.getElementById('posts-list').innerHTML = `
+        document.getElementById('posts-grid').innerHTML = `
           <div class="error-message">
             <p>Не вдалося завантажити пости</p>
           </div>
@@ -169,7 +173,7 @@
     
     // Відображення постів з фільтрацією
     function displayPosts() {
-      const list = document.getElementById('posts-list');
+      const grid = document.getElementById('posts-grid');
       const noResults = document.getElementById('no-results');
       const resultsCount = document.getElementById('results-count');
       
@@ -183,7 +187,7 @@
         filteredPosts = window.utils.searchItems(
           filteredPosts, 
           currentSearch,
-          ['title', 'excerpt', 'tags', 'content']
+          ['title', 'excerpt', 'tags']
         );
       }
       
@@ -192,50 +196,76 @@
       
       // Якщо нічого не знайдено
       if (filteredPosts.length === 0) {
-        list.style.display = 'none';
+        grid.style.display = 'none';
         noResults.style.display = 'block';
         return;
       }
       
       // Показуємо результати
-      list.style.display = 'flex';
+      grid.style.display = 'grid';
       noResults.style.display = 'none';
-      list.innerHTML = '';
+      grid.innerHTML = '';
       
       filteredPosts.forEach(post => {
         const card = document.createElement('a');
-        card.className = 'post-card';
+        card.className = 'card' + (post.featured ? ' featured' : '');
         card.href = `post.html?post=${post.slug}`;
-        card.style.display = 'block';
-        card.style.color = 'inherit';
-        
-        // Формуємо теги
-        const tagsHTML = post.tags && post.tags.length > 0
-          ? post.tags.map(tag => `<span class="chip">#${tag}</span>`).join(' ')
-          : '';
-        
-        // Формуємо мета-інформацію
-        const metaParts = [];
-        if (post.date) {
-          metaParts.push(window.utils.formatDate(post.date));
-        }
-        if (post.readTime) {
-          metaParts.push(`${post.readTime} хв читання`);
-        }
-        const metaHTML = metaParts.length > 0 
-          ? `<div class="post-meta">${metaParts.join(' • ')}</div>`
-          : '';
         
         card.innerHTML = `
-          <h3>${highlightText(post.title, currentSearch)}</h3>
-          ${metaHTML}
-          ${tagsHTML ? `<div style="margin: 8px 0;">${tagsHTML}</div>` : ''}
-          <p class="post-excerpt">${highlightText(post.excerpt, currentSearch)}</p>
-          <span class="read-more">Читати далі →</span>
+          <div class="thumb" style="display: flex; align-items: center; justify-content: center; font-size: 60px; background: var(--card-bg);">
+            ${getPostIcon(post.tags)}
+          </div>
+          <div class="card-body">
+            <h3>${highlightText(post.title, currentSearch)}</h3>
+            ${post.featured ? '<div class="meta" style="color: var(--accent); font-weight: 600;">⭐ Рекомендовано</div>' : ''}
+            ${post.readTime ? `<div class="meta">${post.readTime} хв читання</div>` : ''}
+            <p style="margin: 8px 0 0; color: var(--muted); font-size: 14px;">
+              ${highlightText(post.excerpt, currentSearch)}
+            </p>
+            ${post.tags && post.tags.length > 0 ? 
+              `<div class="tags" style="margin-top: 12px;">
+                ${post.tags.slice(0, 3).map(tag => `<span class="chip">#${tag}</span>`).join(' ')}
+              </div>` : 
+              ''
+            }
+          </div>
         `;
         
-        list.appendChild(card);
+        grid.appendChild(card);
       });
+    }
+    
+    // Функція для вибору іконки на основі тегів поста
+    function getPostIcon(tags) {
+      if (!tags || tags.length === 0) return '📄';
+      
+      // Пріоритет іконок за тегами
+      const iconMap = {
+        'UX': '🎨',
+        'Design': '🎨',
+        'JavaScript': '⚙️',
+        'JS': '⚙️',
+        'Product': '💼',
+        'Energy': '⚡',
+        'Guide': '📖',
+        'B2B': '🏢',
+        'Marketing': '📢',
+        'Content': '✍️',
+        'Telegram': '✈️',
+        'Calculator': '🧮',
+        'Solar': '☀️',
+        'Battery': '🔋'
+      };
+      
+      // Шукаємо першу підходящу іконку
+      for (const tag of tags) {
+        if (iconMap[tag]) {
+          return iconMap[tag];
+        }
+      }
+      
+      // Якщо нічого не підійшло — дефолтна іконка
+      return '📄';
     }
     
     // Підсвічування знайденого тексту
