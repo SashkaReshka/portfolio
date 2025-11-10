@@ -72,6 +72,32 @@ function generateNavHTML(projects) {
   `;
 }
 
+// Додати кнопку-перемикач для мобільних
+function addMobileNavToggle() {
+  if (window.innerWidth <= 860) {
+    const nav = document.querySelector('nav');
+    const navContainer = document.querySelector('.aside-inner');
+    
+    // Створюємо кнопку якщо її ще немає
+    if (!document.querySelector('.nav-toggle')) {
+      const toggle = document.createElement('button');
+      toggle.className = 'nav-toggle';
+      toggle.innerHTML = '☰ Меню';
+      toggle.onclick = () => {
+        nav.classList.toggle('open');
+        toggle.classList.toggle('open');
+      };
+      
+      // Вставляємо перед nav
+      navContainer.insertBefore(toggle, nav);
+    }
+  }
+}
+
+// Викликати після initNavigation()
+window.addEventListener('resize', addMobileNavToggle);
+addMobileNavToggle();
+
 // Підсвічування активної сторінки
 function highlightActivePage() {
   const currentPage = window.location.pathname.split('/').pop() || 'index.html';
