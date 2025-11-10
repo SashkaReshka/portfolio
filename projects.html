@@ -18,7 +18,7 @@
         <div id="breadcrumbs-container"></div>
         
         <section class="section">
-          <h1>🧪 Interactive Lab</h1>
+          <h1>Проєкти</h1>
           <p class="meta">Інструменти та веб-додатки для B2B-клієнтів</p>
           
           <!-- Пошук та фільтри -->
@@ -58,7 +58,7 @@
           
           <!-- Повідомлення якщо нічого не знайдено -->
           <div id="no-results" class="no-results" style="display: none;">
-            <h3>😔 Нічого не знайдено</h3>
+            <h3>Нічого не знайдено</h3>
             <p>Спробуйте змінити критерії пошуку</p>
           </div>
         </section>
@@ -198,24 +198,24 @@
       noResults.style.display = 'none';
       
       grid.innerHTML = filteredProjects.map(project => `
-        <a class="card" href="project.html?project=${project.slug}">
-          <div class="thumb" style="display: flex; align-items: center; justify-content: center; font-size: 60px; background: var(--card);">
-            ${project.icon || '🧪'}
-          </div>
-          <div class="card-body">
-            <h3>${highlightText(project.title)}</h3>
-            <div class="meta">${project.role}</div>
-            <p style="margin: 8px 0 0; color: var(--muted); font-size: 14px;">
-              ${highlightText(project.description)}
-            </p>
-            ${project.tags && project.tags.length > 0 ? `
-              <div class="tags" style="margin-top: 12px;">
-                ${project.tags.slice(0, 3).map(tag => `<span class="chip">#${tag}</span>`).join(' ')}
-              </div>
-            ` : ''}
-          </div>
-        </a>
-      `).join('');
+  <a class="card" href="project.html?project=${project.slug}">
+    <div class="thumb" style="display: flex; align-items: center; justify-content: center; font-size: 60px; background: var(--card);">
+      ${project.icon || '🧪'}
+    </div>
+    <div class="card-body">
+      <h3>${highlightText(project.title)}</h3>
+      <div class="meta">${project.role}</div>
+      <p style="margin: 8px 0 0; color: var(--muted); font-size: 14px;">
+        ${highlightText(project.description)}
+      </p>
+      ${project.tags && project.tags.length > 0 ? `
+        <div class="tags" style="margin-top: 12px;">
+          ${project.tags.slice(0, 3).map(tag => `<span class="chip">#${tag}</span>`).join(' ')}
+        </div>
+      ` : ''}
+    </div>
+  </a>
+`).join('');
     }
 
     // Підсвічування знайденого тексту
