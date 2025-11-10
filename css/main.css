@@ -5,7 +5,7 @@
   --muted: #6b6b6b;     /* приглушений текст */
   --card: #f5f4ed;      /* навігація/картки */
   --line: #e8e7e0;      /* лінії/бордери */
-  --accent: #FF6B35;    /* акцентний (залишаємо) */
+  --accent: #E55A28;    /* акцентний (залишаємо) */
   --radius: 16px;
   --shadow: 0 4px 12px rgba(0,0,0,.04);  /* легша тінь */
 }
@@ -17,7 +17,7 @@
   --muted: #9ba7b4;
   --card: #161b22;
   --line: #222936;
-  --accent: #FF6B35;
+  --accent: #FF8558;
 }
 
 /* Базові стилі */
@@ -279,6 +279,13 @@ nav {
   color: #fff;
   border: none;
   text-align: center;
+  font-weight: 600;
+}
+
+.btn-accent,
+.btn-accent span,
+.btn-accent .btn-text {
+  color: #ffffff !important;
 }
 
 .btn-accent:hover {
@@ -354,6 +361,7 @@ main {
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow);
+  color: var(--fg);
 }
 
 .card-body {
@@ -363,11 +371,14 @@ main {
 .card h3 {
   margin: 0 0 8px;
   font-size: 18px;
+  color: var(--fg);
+  font-weight: 600;
 }
 
 .meta {
   color: var(--muted);
   font-size: 13px;
+  opacity: 0.9;
 }
 
 /* Превью зображення */
