@@ -84,4 +84,11 @@
     "featured": false,
     "thumbnail": ""
   }
+  
+  {
+  "slug": "cctv-toolbox",
+  "icon": "📹",  // ← ДОДАЙ
+  "title": "CCTV Toolbox",
+  ...
+}
 ]

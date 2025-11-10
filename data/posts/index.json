@@ -38,4 +38,11 @@
     "readTime": 5,
     "featured": false
   }
+  
+  {
+  "slug": "calculator-design-guide",
+  "icon": "🧮",  // ← ДОДАЙ
+  "title": "Як я проєктую калькулятори",
+  ...
+}
 ]

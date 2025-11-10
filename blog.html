@@ -49,8 +49,8 @@
             Показано: <strong id="results-count">0</strong> статей
           </div>
           
-          <!-- Список постів -->
-          <div id="posts-list" class="posts-list">
+         <!-- Сітка постів -->
+<div id="posts-list" class="grid cols-3">
             <div class="loading-state">
               <div class="spinner"></div>
               <p>Завантаження постів...</p>
@@ -202,41 +202,70 @@
       noResults.style.display = 'none';
       list.innerHTML = '';
       
-      filteredPosts.forEach(post => {
-        const card = document.createElement('a');
-        card.className = 'post-card';
-        card.href = `post.html?post=${post.slug}`;
-        card.style.display = 'block';
-        card.style.color = 'inherit';
-        
-        // Формуємо теги
-        const tagsHTML = post.tags && post.tags.length > 0
-          ? post.tags.map(tag => `<span class="chip">#${tag}</span>`).join(' ')
-          : '';
-        
-        // Формуємо мета-інформацію
-        const metaParts = [];
-        if (post.date) {
-          metaParts.push(window.utils.formatDate(post.date));
-        }
-        if (post.readTime) {
-          metaParts.push(`${post.readTime} хв читання`);
-        }
-        const metaHTML = metaParts.length > 0 
-          ? `<div class="post-meta">${metaParts.join(' • ')}</div>`
-          : '';
-        
-        card.innerHTML = `
-          <h3>${highlightText(post.title, currentSearch)}</h3>
-          ${metaHTML}
-          ${tagsHTML ? `<div style="margin: 8px 0;">${tagsHTML}</div>` : ''}
-          <p class="post-excerpt">${highlightText(post.excerpt, currentSearch)}</p>
-          <span class="read-more">Читати далі →</span>
-        `;
-        
-        list.appendChild(card);
-      });
-    }
+     // Відображення постів з фільтрацією
+function displayPosts() {
+  const list = document.getElementById('posts-list');
+  const noResults = document.getElementById('no-results');
+  const resultsCount = document.getElementById('results-count');
+  
+  // Фільтруємо по тегу
+  let filteredPosts = currentTag === 'all' 
+    ? allPosts 
+    : window.utils.filterByTag(allPosts, currentTag);
+  
+  // Фільтруємо по пошуковому запиту
+  if (currentSearch) {
+    filteredPosts = window.utils.searchItems(
+      filteredPosts, 
+      currentSearch,
+      ['title', 'excerpt', 'tags']
+    );
+  }
+  
+  // Оновлюємо лічильник
+  resultsCount.textContent = filteredPosts.length;
+  
+  // Якщо нічого не знайдено
+  if (filteredPosts.length === 0) {
+    list.style.display = 'none';
+    noResults.style.display = 'block';
+    return;
+  }
+  
+  // Показуємо результати
+  list.style.display = 'grid';
+  noResults.style.display = 'none';
+  list.innerHTML = '';
+  
+  filteredPosts.forEach(post => {
+    const card = document.createElement('a');
+    card.className = 'card';
+    card.href = `post.html?post=${post.slug}`;
+    
+    // Формуємо теги
+    const tagsHTML = post.tags && post.tags.length > 0
+      ? `<div class="tags" style="margin-top: 12px;">
+          ${post.tags.slice(0, 3).map(tag => `<span class="chip">#${tag}</span>`).join(' ')}
+         </div>`
+      : '';
+    
+    card.innerHTML = `
+      <div class="thumb" style="display: flex; align-items: center; justify-content: center; font-size: 60px; background: var(--card);">
+        ${post.icon || '📝'}
+      </div>
+      <div class="card-body">
+        <h3>${highlightText(post.title, currentSearch)}</h3>
+        <div class="meta">${window.utils.formatDate(post.date)}${post.readTime ? ` • ${post.readTime} хв читання` : ''}</div>
+        <p style="margin: 8px 0 0; color: var(--muted); font-size: 14px;">
+          ${highlightText(post.excerpt, currentSearch)}
+        </p>
+        ${tagsHTML}
+      </div>
+    `;
+    
+    list.appendChild(card);
+  });
+}
     
     // Підсвічування знайденого тексту
     function highlightText(text, query) {
