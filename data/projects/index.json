@@ -1,16 +1,16 @@
 [
-  {
-    "slug": "currency-converter",
-	"calculatorPath": "calculators/currency-converter.html",
-    "title": "Конвертер валют",
-    "role": "Калькулятор",
-    "description": "Офіційний курс НБУ, 15+ валют, кешування",
-    "tags": ["калькулятор", "валюта", "фінанси", "НБУ"],
-    "date": "2025-01-10",
-    "thumbnail": "assets/images/currency-converter.jpg",
-	"isCalculator": true,
-    "featured": true
-  },
+{
+  "slug": "currency-converter",
+  "title": "Конвертер валют",
+  "role": "Калькулятор",
+  "description": "Офіційний курс НБУ, 15+ валют, кешування",
+  "tags": ["калькулятор", "валюта", "фінанси", "НБУ"],
+  "date": "2025-01-10",
+  "thumbnail": "assets/images/currency-converter.jpg",
+  "featured": true,
+  "isCalculator": true,
+  "calculatorPath": "calculators/currency-converter.html"
+},
   {
     "slug": "cctv-toolbox",
     "title": "CCTV Toolbox",
