@@ -59,13 +59,10 @@ function generateNavHTML(projects) {
       <!-- Навігація -->
       <nav>
         <div class="nav-title">Навігація</div>
-        <a class="nav-link" href="index.html">🏠 <span>Головна</span></a>
-        
-        <a class="nav-link" href="projects.html">🧪 <span>Interactive Lab</span></a>
-        
-        <a class="nav-link" href="gpts.html">🤖 <span>GPTs Lab</span></a>
-        
-        <a class="nav-link" href="blog.html">📝 <span>Блог</span></a>
+        <a class="nav-link" href="/portfolio/index.html">🏠 <span>Головна</span></a>
+<a class="nav-link" href="/portfolio/projects.html">🧪 <span>Interactive Lab</span></a>
+<a class="nav-link" href="/portfolio/gpts.html">🤖 <span>GPTs Lab</span></a>
+<a class="nav-link" href="/portfolio/blog.html">📝 <span>Блог</span></a>
         
         <!-- Переключатель теми в меню (тільки мобільні) -->
         <div class="theme-toggle-mobile">
