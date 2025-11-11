@@ -1,6 +1,6 @@
-// project-loader.js - Завантаження та відображення проєкту
+// project-loader.js - Завантаження контенту проєкту
 
-// Отримання параметра з URL
+// Отримання slug проєкту з URL
 function getProjectSlug() {
   const params = new URLSearchParams(window.location.search);
   return params.get('project');
@@ -9,13 +9,19 @@ function getProjectSlug() {
 // Завантаження даних проєкту
 async function loadProject(slug) {
   try {
-    const response = await fetch(`data/projects/${slug}.json`);
+    const response = await fetch('data/projects/index.json');
     
     if (!response.ok) {
       throw new Error(`HTTP помилка! статус: ${response.status}`);
     }
-
-    const project = await response.json();
+    
+    const projects = await response.json();
+    const project = projects.find(p => p.slug === slug);
+    
+    if (!project) {
+      throw new Error('Проєкт не знайдено');
+    }
+    
     return project;
   } catch (error) {
     console.error('Помилка завантаження проєкту:', error);
@@ -23,28 +29,18 @@ async function loadProject(slug) {
   }
 }
 
-if (project.isCalculator && project.calculatorPath) {
-  window.location.href = project.calculatorPath;
-  return;
-}
-
 // Рендеринг проєкту
 function renderProject(project) {
   const container = document.getElementById('project-content');
   
-  if (!container) {
-    console.error('Контейнер #project-content не знайдено');
-    return;
-  }
-  
   // Формуємо теги
-  const tagsHTML = project.tags && project.tags.length > 0
-    ? `<div class="tags">${project.tags.map(tag => `<span class="chip">#${tag}</span>`).join(' ')}</div>`
+  const tagsHTML = project.tags
+    ? project.tags.map(tag => `<span class="chip">#${tag}</span>`).join(' ')
     : '';
   
   // Формуємо дату
   const dateHTML = project.date
-    ? `<div class="meta">Опубліковано: ${window.utils.formatDate(project.date)}</div>`
+    ? `<div class="meta">Опубліковано: ${new Date(project.date).toLocaleDateString('uk-UA')}</div>`
     : '';
   
   // Основний HTML
@@ -54,22 +50,22 @@ function renderProject(project) {
         <h1>${project.title}</h1>
         <div class="meta">${project.role}</div>
         ${dateHTML}
-        ${tagsHTML}
+        <div class="tags">${tagsHTML}</div>
       </header>
       
       ${project.thumbnail ? `
         <div class="project-image">
-          <img src="${project.thumbnail}" alt="${project.title}" loading="lazy" />
+          <img src="${project.thumbnail}" alt="${project.title}" />
         </div>
       ` : ''}
       
       <div class="project-content">
-        ${project.content}
+        ${project.content || '<p>' + project.description + '</p>'}
       </div>
       
       ${project.link && project.link !== '#' ? `
         <footer class="project-footer">
-          <a href="${project.link}" class="btn btn-accent" target="_blank" rel="noopener noreferrer">
+          <a href="${project.link}" class="btn btn-accent" target="_blank" rel="noopener">
             Відкрити проєкт →
           </a>
         </footer>
@@ -83,18 +79,12 @@ function renderProject(project) {
 
 // Оновлення meta-тегів та title
 function updateMetaTags(project) {
-  // Title
   document.title = `${project.title} — Олександр`;
   
   // Description
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) {
     metaDesc.content = project.description || '';
-  } else {
-    const meta = document.createElement('meta');
-    meta.name = 'description';
-    meta.content = project.description || '';
-    document.head.appendChild(meta);
   }
   
   // Open Graph
@@ -105,7 +95,6 @@ function updateMetaTags(project) {
   }
 }
 
-// Допоміжна функція для оновлення Open Graph тегів
 function updateMetaProperty(property, content) {
   let meta = document.querySelector(`meta[property="${property}"]`);
   if (!meta) {
@@ -119,8 +108,6 @@ function updateMetaProperty(property, content) {
 // Показ помилки
 function showError(message) {
   const container = document.getElementById('project-content');
-  if (!container) return;
-  
   container.innerHTML = `
     <div class="error-message">
       <h1>😔 ${message}</h1>
@@ -133,8 +120,6 @@ function showError(message) {
 // Показ стану завантаження
 function showLoading() {
   const container = document.getElementById('project-content');
-  if (!container) return;
-  
   container.innerHTML = `
     <div class="loading-state">
       <div class="spinner"></div>
@@ -156,18 +141,20 @@ async function initProjectPage() {
   
   try {
     const project = await loadProject(slug);
-    renderProject(project);
     
-    // Оновлюємо breadcrumbs з назвою проєкту
-    if (window.initBreadcrumbs) {
-      window.initBreadcrumbs({ projectTitle: project.title });
+    // ✅ ПЕРЕВІРКА: якщо це калькулятор — редирект
+    if (project.isCalculator && project.calculatorPath) {
+      window.location.href = project.calculatorPath;
+      return;
     }
+    
+    renderProject(project);
   } catch (error) {
     showError('Проєкт не знайдено');
   }
 }
 
-// Запуск при завантаженні сторінки
+// Запуск при завантаженні DOM
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initProjectPage);
 } else {
