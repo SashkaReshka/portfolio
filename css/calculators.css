@@ -92,7 +92,7 @@
 }
 
 .calc-form-group:last-child {
-  margin-bottom: 0;
+  margin-bottom: 24px;
 }
 
 /* Label */
@@ -221,6 +221,7 @@
   color: var(--fg);
   transition: all 0.3s ease;
   user-select: none;
+  margin-bottom: 26px;
 }
 
 .calc-swap-btn:hover {
