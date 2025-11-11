@@ -23,9 +23,7 @@ async function loadProject(slug) {
   }
 }
 
-// Після loadProject(), перед renderProject():
 if (project.isCalculator && project.calculatorPath) {
-  // Редирект на калькулятор
   window.location.href = project.calculatorPath;
   return;
 }
