@@ -1,6 +1,7 @@
 [
   {
     "slug": "currency-converter",
+	"calculatorPath": "calculators/currency-converter.html",
     "title": "Конвертер валют",
     "role": "Калькулятор",
     "description": "Офіційний курс НБУ, 15+ валют, кешування",
