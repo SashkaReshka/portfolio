@@ -1,0 +1,69 @@
+/* ========================================
+   BASE.CSS - Базові стилі (критичні)
+   Завантажуються першими на всіх сторінках
+   ======================================== */
+
+/* CSS-змінні для світлої теми */
+:root {
+  --bg: #faf9f5;
+  --fg: #2d2d2d;
+  --muted: #6b6b6b;
+  --card: #f5f4ed;
+  --line: #e8e7e0;
+  --accent: #D94A1A;
+  --radius: 16px;
+  --shadow: 0 4px 12px rgba(0,0,0,.04);
+}
+
+/* CSS-змінні для темної теми */
+:root.dark {
+  --bg: #0d1117;
+  --fg: #e6edf3;
+  --muted: #9ba7b4;
+  --card: #161b22;
+  --line: #222936;
+  --accent: #FF9670;
+}
+
+/* Базові стилі */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--fg);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* Макет сторінки */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100dvh;
+}
+
+/* Основний контент */
+main {
+  padding: 36px 40px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Utility classes */
+.grow {
+  flex: 1;
+}

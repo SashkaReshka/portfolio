@@ -1,0 +1,214 @@
+/* ========================================
+   SECTIONS.CSS - Секції та розкладки контенту
+   ======================================== */
+
+/* Сітка */
+.grid {
+  display: grid;
+  gap: 18px;
+}
+
+.grid.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid.cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Hero секція */
+.hero {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 28px;
+  align-items: center;
+}
+
+/* Секції */
+.section {
+  margin-top: 36px;
+}
+
+.section h1 {
+  font-size: 32px;
+  margin: 0 0 12px;
+}
+
+.section h2 {
+  font-size: 22px;
+  margin: 0 0 12px;
+}
+
+/* Список */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.list-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  transition: all 0.2s;
+}
+
+.list-item:hover {
+  box-shadow: var(--shadow);
+}
+
+/* Футер */
+.footer {
+  margin: 28px 0 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Пошук та фільтри */
+.search-filters {
+  margin: 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.search-box {
+  width: 100%;
+}
+
+/* Фільтри по тегах */
+.filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter-tag {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--fg);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-tag:hover {
+  border-color: var(--accent);
+  background: var(--card);
+}
+
+.filter-tag.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Інформація про результати */
+.results-info {
+  margin: 16px 0;
+  padding: 12px;
+  background: var(--card);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.results-info strong {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Стани завантаження */
+.loading-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Повідомлення про помилку */
+.error-message {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+/* Повідомлення "нічого не знайдено" */
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.no-results h3 {
+  font-size: 24px;
+  margin: 0 0 12px;
+  color: var(--fg);
+}
+
+.no-results p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Хлібні крихти */
+.breadcrumbs {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 12px 0;
+  font-size: 14px;
+  color: var(--muted);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.breadcrumb-link {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumb-link:hover {
+  color: var(--accent);
+}
+
+.breadcrumb-separator {
+  color: var(--line);
+  user-select: none;
+}
+
+.breadcrumb-current {
+  color: var(--fg);
+  font-weight: 500;
+}
+
+.breadcrumb-home {
+  font-size: 16px;
+}
