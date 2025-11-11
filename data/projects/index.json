@@ -14,7 +14,7 @@
     "thumbnail": "assets/images/currency-converter.jpg",
     "featured": true,
 	"isCalculator": true,
-    "calculatorPath": "calculators/currency-converter.html"
+    "calculatorPath": "projects/currency-converter.html"
   },
   {
     "slug": "cctv-toolbox",
