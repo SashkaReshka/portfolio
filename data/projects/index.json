@@ -1,4 +1,19 @@
 [
+
+ {
+  "slug": "currency-converter",
+  "title": "Конвертер валют",
+  "role": "Калькулятор",
+  "description": "Офіційний курс НБУ, 15+ валют, кешування",
+  "content": "<h2>Конвертер валют НБУ</h2><p>Професійний інструмент...</p>",
+  "tags": ["калькулятор", "валюта", "фінанси", "НБУ"],
+  "date": "2025-01-10",
+  "link": "calculators/currency-converter.html",
+  "thumbnail": "assets/images/currency-converter.jpg",
+  "featured": true,
+  "category": "calculator"
+}
+
   {
     "slug": "cctv-toolbox",
     "title": "CCTV Toolbox",
