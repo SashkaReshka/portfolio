@@ -1014,7 +1014,8 @@ mark {
   padding: 12px 0;
   font-size: 14px;
   color: var(--muted);
-  flex-wrap: wrap;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 .breadcrumb-item {
@@ -1218,6 +1219,9 @@ mark {
   .nav-title {
     margin: 12px 0 8px;
     font-size: 11px;
+  }
+   .mobile-footer {
+    display: none;  /* Було: display: block; */
   }
 }
 
