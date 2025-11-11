@@ -12,7 +12,9 @@
     ],
     "date": "2025-01-10",
     "thumbnail": "assets/images/currency-converter.jpg",
-    "featured": true
+    "featured": true,
+	"isCalculator": true,
+    "calculatorPath": "calculators/currency-converter.html"
   },
   {
     "slug": "cctv-toolbox",
