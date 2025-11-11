@@ -8,6 +8,7 @@
     "tags": ["калькулятор", "валюта", "фінанси", "НБУ"],
     "date": "2025-01-10",
     "thumbnail": "assets/images/currency-converter.jpg",
+	"isCalculator": true,
     "featured": true
   },
   {
