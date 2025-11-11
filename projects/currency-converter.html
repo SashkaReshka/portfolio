@@ -118,23 +118,15 @@
                 Не вдалося завантажити дані від НБУ. Спробуйте іншу дату або перевірте з'єднання.
               </div>
 
-              <!-- Плитки з курсами -->
+              <!-- Плитки з курсами (2 штуки: прямий та зворотний) -->
               <div class="calc-tiles">
                 <div class="calc-tile">
-                  <div class="calc-tile-label">
-                    UAH за 1 <span id="fromCode">—</span>
-                  </div>
+                  <div class="calc-tile-label">Курс</div>
                   <div class="calc-tile-value" id="rateFrom">—</div>
                 </div>
                 <div class="calc-tile">
-                  <div class="calc-tile-label">
-                    UAH за 1 <span id="toCode">—</span>
-                  </div>
+                  <div class="calc-tile-label">Зворотний курс</div>
                   <div class="calc-tile-value" id="rateTo">—</div>
-                </div>
-                <div class="calc-tile">
-                  <div class="calc-tile-label">Крос-курс</div>
-                  <div class="calc-tile-value" id="crossRate">—</div>
                 </div>
               </div>
 
@@ -187,9 +179,6 @@
         resultMeta: document.getElementById('resultMeta'),
         rateFrom: document.getElementById('rateFrom'),
         rateTo: document.getElementById('rateTo'),
-        fromCode: document.getElementById('fromCode'),
-        toCode: document.getElementById('toCode'),
-        crossRate: document.getElementById('crossRate'),
         error: document.getElementById('error'),
         cacheStatus: document.getElementById('cacheStatus')
       };
@@ -388,7 +377,8 @@
         
         // Конвертація: amount * (UAH/FROM) / (UAH/TO)
         const result = amount * (fromRate / toRate);
-        const crossRate = fromRate / toRate;
+        const crossRate = fromRate / toRate;   // 1 FROM у TO
+        const inverseRate = 1 / crossRate;     // 1 TO у FROM
         
         // Відображення результату
         elements.resultValue.textContent = isFinite(result) 
@@ -401,12 +391,9 @@
         
         elements.resultMeta.textContent = `Курс: 1 ${fromCode} = ${formatter4.format(crossRate)} ${toCode} • ${formatDate(exchangeDate)}`;
         
-        // Оновлюємо плитки
-        elements.rateFrom.textContent = `${formatter4.format(fromRate)} UAH`;
-        elements.rateTo.textContent = `${formatter4.format(toRate)} UAH`;
-        elements.fromCode.textContent = fromCode;
-        elements.toCode.textContent = toCode;
-        elements.crossRate.textContent = `${formatter4.format(crossRate)}`;
+        // ✅ Оновлені 2 плитки: прямий і зворотний курс
+        elements.rateFrom.textContent = `1 ${fromCode} = ${formatter4.format(crossRate)} ${toCode}`;
+        elements.rateTo.textContent   = `1 ${toCode} = ${formatter4.format(inverseRate)} ${fromCode}`;
         
         // Анімація
         elements.result.classList.add('pulse');
