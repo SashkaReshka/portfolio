@@ -80,7 +80,7 @@ function generateNavHTML(projects) {
       
       <!-- Футер (десктоп) -->
       <div class="cta">
-        <a class="btn btn-accent" href="index.html#contact">Зв'язатися</a>
+        <a class="btn btn-accent" href="/portfolio/index.html#contact">Зв'язатися</a>
         
         <!-- Переключатель теми (компактний, десктоп) -->
         <div class="theme-toggle-compact">
