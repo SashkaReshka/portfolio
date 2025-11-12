@@ -1,0 +1,99 @@
+/* === CLEAN-PRO THEME OVERRIDES === */
+
+/* Палитра и тени */
+:root {
+  --bg: #f9fafb;
+  --fg: #111827;
+  --muted: #6b7280;
+  --card: #ffffff;
+  --line: #e5e7eb;
+  --accent: #2563eb;          /* electric blue */
+  --radius: 14px;
+  --shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
+}
+:root.dark {
+  --bg: #0b1220;
+  --fg: #e5e7eb;
+  --muted: #9aa4b2;
+  --card: #0f172a;
+  --line: #1f2a44;
+  --accent: #60a5fa;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* Сайдбар: глубина + деликатный фон */
+aside {
+  background: linear-gradient(180deg, var(--card), transparent);
+  box-shadow: 1px 0 0 var(--line), 6px 0 20px rgba(0,0,0,.03);
+}
+
+/* Навигация: современный hover/active */
+.nav-link {
+  position: relative;
+  transition: color .2s ease, background .2s ease, transform .15s ease;
+}
+.nav-link:hover {
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  color: var(--accent);
+}
+.nav-link.active {
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+  font-weight: 600;
+}
+.nav-link.active::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--accent);
+}
+
+/* Кнопки */
+.btn {
+  border-radius: 12px;
+  transition: transform .12s ease, box-shadow .2s ease;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn-accent { background: var(--accent); }
+.btn-accent:hover { filter: none; box-shadow: 0 8px 22px rgba(37, 99, 235, .25); }
+
+/* Карточки и плитки */
+.card,
+.calculator-card,
+.calc-tile {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.calc-tile:hover { border-color: var(--accent); box-shadow: 0 10px 24px rgba(37,99,235,.12); }
+
+/* Хлебные крошки: аккуратный акцент */
+.breadcrumb-link:hover { color: var(--accent); }
+.breadcrumb-current { color: var(--fg); }
+
+/* Результат калькулятора — приятный контраст */
+.calc-result {
+  background: linear-gradient(135deg, var(--card), var(--bg));
+  border: 1px solid var(--line);
+}
+.calc-result-value { color: var(--accent); }
+
+/* Бейджи под заголовками */
+.calc-badge {
+  background: color-mix(in oklab, var(--accent) 10%, transparent);
+  border-color: color-mix(in oklab, var(--accent) 25%, transparent);
+  color: var(--accent);
+}
+
+/* Анимации появления */
+.section, .card, .calc-tile, .calc-result {
+  animation: cp-fade .35s ease both;
+}
+@keyframes cp-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
