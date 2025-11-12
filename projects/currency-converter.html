@@ -22,22 +22,9 @@
 
     <!-- Головний контент -->
     <main>
+	<!-- 🧭 Хлібні крихти для розділу -->
+  <div id="breadcrumbs-container"></div>
       <div class="container">
-        <!-- Breadcrumbs -->
-        <nav class="breadcrumbs">
-          <div class="breadcrumb-item">
-            <a href="../index.html" class="breadcrumb-link breadcrumb-home">🏠</a>
-          </div>
-          <span class="breadcrumb-separator">›</span>
-          <div class="breadcrumb-item">
-            <a href="../projects.html" class="breadcrumb-link">Interactive Lab</a>
-          </div>
-          <span class="breadcrumb-separator">›</span>
-          <div class="breadcrumb-item">
-            <span class="breadcrumb-current">Конвертер валют</span>
-          </div>
-        </nav>
-
         <!-- Калькулятор -->
         <div class="calculator-wrapper">
           <div class="calculator-card">
@@ -154,6 +141,15 @@
   <script src="../js/theme.js"></script>
   <script src="../js/nav.js"></script>
   <script src="../js/utils.js"></script>
+  <script src="../js/breadcrumbs.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.initBreadcrumbs) window.initBreadcrumbs([
+      { title: 'Interactive Lab', url: '../projects.html' },
+      { title: 'Конвертер валют' }
+    ]);
+  });
+</script>
   
   <!-- Логіка калькулятора -->
   <script>
