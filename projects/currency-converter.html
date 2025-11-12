@@ -138,16 +138,13 @@
   </div>
 
   <!-- JavaScript -->
-  <script src="../js/theme.js"></script>
-  <script src="../js/nav.js"></script>
-  <script src="../js/utils.js"></script>
-  <script src="../js/breadcrumbs.js"></script>
+<script src="../js/theme.js"></script>
+<script src="../js/nav.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/breadcrumbs.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    if (window.initBreadcrumbs) window.initBreadcrumbs([
-      { title: 'Interactive Lab', url: '../projects.html' },
-      { title: 'Конвертер валют' }
-    ]);
+    if (window.initBreadcrumbs) window.initBreadcrumbs(); // без параметров
   });
 </script>
   
