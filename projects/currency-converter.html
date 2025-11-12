@@ -22,22 +22,22 @@
 
     <!-- Головний контент -->
     <main>
-      <div class="container">
-        <!-- Breadcrumbs -->
-        <nav class="breadcrumbs">
-          <div class="breadcrumb-item">
-            <a href="../index.html" class="breadcrumb-link breadcrumb-home">🏠</a>
-          </div>
-          <span class="breadcrumb-separator">›</span>
-          <div class="breadcrumb-item">
-            <a href="../projects.html" class="breadcrumb-link">Interactive Lab</a>
-          </div>
-          <span class="breadcrumb-separator">›</span>
-          <div class="breadcrumb-item">
-            <span class="breadcrumb-current">Конвертер валют</span>
-          </div>
-        </nav>
+      <!-- 🧭 Крихти (статичні, як на projects.html) -->
+      <nav class="breadcrumbs">
+        <div class="breadcrumb-item">
+          <a href="../index.html" class="breadcrumb-link breadcrumb-home">🏠</a>
+        </div>
+        <span class="breadcrumb-separator">›</span>
+        <div class="breadcrumb-item">
+          <a href="../projects.html" class="breadcrumb-link">Interactive Lab</a>
+        </div>
+        <span class="breadcrumb-separator">›</span>
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-current">Конвертер валют</span>
+        </div>
+      </nav>
 
+      <div class="container">
         <!-- Калькулятор -->
         <div class="calculator-wrapper">
           <div class="calculator-card">
@@ -45,6 +45,10 @@
             <div class="calc-header">
               <h1>💱 Конвертер валют</h1>
               <p>Конвертуйте валюти за офіційним курсом Національного банку України</p>
+              <div class="calc-badge">
+                <span class="calc-badge-icon">🏛️</span>
+                Офіційний курс НБУ
+              </div>
             </div>
 
             <!-- Тіло калькулятора -->
@@ -53,24 +57,12 @@
               <div class="calc-grid-2">
                 <div class="calc-form-group">
                   <label class="calc-label">Дата курсу</label>
-                  <input 
-                    type="date" 
-                    id="datePick" 
-                    class="calc-input"
-                  />
+                  <input type="date" id="datePick" class="calc-input" />
                 </div>
                 <div class="calc-form-group">
                   <label class="calc-label">Сума</label>
                   <div class="calc-input-icon">
-                    <input 
-                      type="number" 
-                      id="amount" 
-                      class="calc-input" 
-                      min="0" 
-                      step="0.01" 
-                      value="100"
-                      placeholder="Введіть суму"
-                    />
+                    <input type="number" id="amount" class="calc-input" min="0" step="0.01" value="100" placeholder="Введіть суму" />
                   </div>
                 </div>
               </div>
@@ -84,9 +76,7 @@
                   </div>
                 </div>
 
-                <button class="calc-swap-btn" id="btnSwap" title="Поміняти місцями">
-                  ⇄
-                </button>
+                <button class="calc-swap-btn" id="btnSwap" title="Поміняти місцями">⇄</button>
 
                 <div class="calc-form-group">
                   <label class="calc-label">У валюту</label>
@@ -98,23 +88,13 @@
 
               <!-- Результат -->
               <div class="calc-result" id="result">
-                <div class="calc-result-label" id="resultLabel">
-                  Результат конвертації
-                </div>
-                <div class="calc-result-value" id="resultValue">
-                  —
-                </div>
-                <div class="calc-result-meta" id="resultMeta">
-                  Курс: — • Станом на: —
-                </div>
+                <div class="calc-result-label" id="resultLabel">Результат конвертації</div>
+                <div class="calc-result-value" id="resultValue">—</div>
+                <div class="calc-result-meta" id="resultMeta">Курс: — • Станом на: —</div>
+                <!-- Пасхалку НЕ додаємо в HTML, вона з’явиться динамічно JS -->
               </div>
 
-              <!-- Помилка -->
-              <div class="calc-error" id="error">
-                Не вдалося завантажити дані від НБУ. Спробуйте іншу дату або перевірте з'єднання.
-              </div>
-
-              <!-- Плитки з курсами (2 штуки: прямий та зворотний) -->
+              <!-- Плитки (2 шт) -->
               <div class="calc-tiles">
                 <div class="calc-tile">
                   <div class="calc-tile-label">Курс</div>
@@ -136,12 +116,8 @@
 
             <!-- Футер -->
             <div class="calc-footer">
-              <div class="calc-footer-text">
-                © 2025 • Дані з bank.gov.ua
-              </div>
-              <div class="calc-footer-badge" id="cacheStatus">
-                Кеш: перевірка...
-              </div>
+              <div class="calc-footer-text">© 2025 • Дані з bank.gov.ua</div>
+              <div class="calc-footer-badge" id="cacheStatus">Кеш: перевірка...</div>
             </div>
           </div>
         </div>
@@ -154,15 +130,21 @@
   <script src="../js/theme.js"></script>
   <script src="../js/nav.js"></script>
   <script src="../js/utils.js"></script>
-  
-  <!-- Логіка калькулятора -->
+
+  <!-- Логіка калькулятора + динамічна пасхалка -->
   <script>
     (function() {
       'use strict';
-      
-      // ========================================
+
+      // Додамо стилі для пасхалки ДИНАМІЧНО (щоб не світилися в CSS)
+      const style = document.createElement('style');
+      style.textContent = `
+        .calc-easter-egg{margin-top:8px;color:var(--muted);font-style:italic;font-size:14px;min-height:20px;opacity:0;transition:opacity .3s ease}
+        .calc-easter-egg.show{opacity:1;color:var(--accent)}
+      `;
+      document.head.appendChild(style);
+
       // ЕЛЕМЕНТИ DOM
-      // ========================================
       const elements = {
         date: document.getElementById('datePick'),
         amount: document.getElementById('amount'),
@@ -179,260 +161,150 @@
         cacheStatus: document.getElementById('cacheStatus')
       };
 
-      // ========================================
-      // КОНФІГУРАЦІЯ
-      // ========================================
+      // ДИНАМІЧНО створюємо елемент пасхалки — його НЕ буде у вихідному HTML
+      const egg = document.createElement('div');
+      egg.id = 'easterEgg';
+      egg.className = 'calc-easter-egg';
+      elements.result.appendChild(egg);
+
+      // КОНФІГ
       const NBU_API = 'https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange';
       const LOCALE = 'uk-UA';
-      
-      // Форматтери чисел
-      const formatter2 = new Intl.NumberFormat(LOCALE, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-      
-      const formatter4 = new Intl.NumberFormat(LOCALE, {
-        minimumFractionDigits: 4,
-        maximumFractionDigits: 4
-      });
+      const fmt2 = new Intl.NumberFormat(LOCALE,{minimumFractionDigits:2,maximumFractionDigits:2});
+      const fmt4 = new Intl.NumberFormat(LOCALE,{minimumFractionDigits:4,maximumFractionDigits:4});
 
-      // ========================================
       // СТАН
-      // ========================================
       let rates = new Map();
       let exchangeDate = null;
 
-      // ========================================
-      // ІНІЦІАЛІЗАЦІЯ
-      // ========================================
       function init() {
-        // Встановлюємо сьогоднішню дату
-        const today = new Date().toISOString().slice(0, 10);
+        const today = new Date().toISOString().slice(0,10);
         elements.date.value = today;
-        
-        // Події
+
         elements.date.addEventListener('change', loadRates);
         elements.amount.addEventListener('input', calculate);
         elements.from.addEventListener('change', calculate);
         elements.to.addEventListener('change', calculate);
         elements.swap.addEventListener('click', swapCurrencies);
-        
-        // Завантажуємо курси
+
         loadRates();
       }
 
-      // ========================================
-      // ЗАВАНТАЖЕННЯ КУРСІВ
-      // ========================================
       async function loadRates() {
         try {
           hideError();
-          
-          const dateISO = elements.date.value || new Date().toISOString().slice(0, 10);
-          const dateYMD = dateISO.replace(/-/g, '');
-          
-          // Перевірка кешу
+          const dateISO = elements.date.value || new Date().toISOString().slice(0,10);
+          const dateYMD = dateISO.replace(/-/g,'');
           const cacheKey = `nbu_rates_${dateYMD}`;
           const cached = localStorage.getItem(cacheKey);
-          
+
           if (cached) {
-            const data = JSON.parse(cached);
-            applyRates(data);
+            applyRates(JSON.parse(cached));
             elements.cacheStatus.textContent = 'Кеш: localStorage ✓';
             return;
           }
-          
-          // Запит до API
+
           elements.cacheStatus.textContent = 'Кеш: завантаження...';
-          const url = `${NBU_API}?date=${dateYMD}&json`;
-          const response = await fetch(url, { cache: 'no-store' });
-          
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-          }
-          
-          const data = await response.json();
-          
-          // Зберігаємо в кеш
-          const cacheData = { list: data, dateISO };
-          localStorage.setItem(cacheKey, JSON.stringify(cacheData));
-          
-          applyRates(cacheData);
+          const resp = await fetch(`${NBU_API}?date=${dateYMD}&json`, { cache: 'no-store' });
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          const list = await resp.json();
+
+          const payload = { list, dateISO };
+          localStorage.setItem(cacheKey, JSON.stringify(payload));
+          applyRates(payload);
           elements.cacheStatus.textContent = 'Кеш: оновлено ✓';
-          
-        } catch (error) {
-          console.error('Помилка завантаження курсів:', error);
+        } catch (e){
+          console.error(e);
           showError();
           elements.cacheStatus.textContent = 'Кеш: помилка ✗';
         }
       }
 
-      // ========================================
-      // ЗАСТОСУВАННЯ КУРСІВ
-      // ========================================
-      function applyRates(payload) {
+      function applyRates(payload){
         rates.clear();
-        
-        // Додаємо UAH (синтетична валюта)
-        rates.set('UAH', {
-          cc: 'UAH',
-          txt: 'Українська гривня',
-          rate: 1,
-          exchangedate: formatDate(payload.dateISO)
-        });
-        
-        // Імпортуємо курси від НБУ
-        (payload.list || []).forEach(item => {
-          if (item && item.cc && typeof item.rate === 'number') {
-            rates.set(item.cc.toUpperCase(), {
-              cc: item.cc.toUpperCase(),
-              txt: item.txt,
-              rate: item.rate,
-              exchangedate: item.exchangedate
-            });
+        // UAH = 1
+        rates.set('UAH', { cc:'UAH', txt:'\u0423\u043A\u0440\u0430\u0457\u043D\u0441\u044C\u043A\u0430 \u0433\u0440\u0438\u0432\u043D\u044F', rate:1, exchangedate: formatDate(payload.dateISO) });
+        (payload.list||[]).forEach(it=>{
+          if (it && it.cc && typeof it.rate === 'number'){
+            rates.set(it.cc.toUpperCase(), { cc: it.cc.toUpperCase(), txt: it.txt, rate: it.rate, exchangedate: it.exchangedate });
           }
         });
-        
         exchangeDate = payload.dateISO;
-        
-        // Оновлюємо селекти
         buildSelects();
-        
-        // Розраховуємо
         calculate();
       }
 
-      // ========================================
-      // ПОБУДОВА СЕЛЕКТІВ
-      // ========================================
-      function buildSelects() {
-        const options = [];
-        const preferred = ['UAH', 'USD', 'EUR', 'PLN', 'GBP', 'CHF', 'CZK', 'HUF', 'RON', 'TRY', 'CAD', 'JPY', 'CNY', 'GEL', 'MDL'];
+      function buildSelects(){
+        const opts = [];
+        const preferred = ['UAH','USD','EUR','PLN','GBP','CHF','CZK','HUF','RON','TRY','CAD','JPY','CNY','GEL','MDL'];
         const seen = new Set();
-        
-        // Спочатку популярні
-        preferred.forEach(code => {
-          if (rates.has(code) && !seen.has(code)) {
-            const currency = rates.get(code);
-            options.push(new Option(`${code} — ${currency.txt}`, code));
-            seen.add(code);
-          }
-        });
-        
-        // Потім решта по алфавіту
-        Array.from(rates.keys()).sort().forEach(code => {
-          if (!seen.has(code)) {
-            const currency = rates.get(code);
-            options.push(new Option(`${code} — ${currency.txt}`, code));
-          }
-        });
-        
-        // Зберігаємо поточні значення
+        preferred.forEach(c=>{ if(rates.has(c)&&!seen.has(c)){ const cur=rates.get(c); opts.push(new Option(`${c} — ${cur.txt}`, c)); seen.add(c); }});
+        Array.from(rates.keys()).sort().forEach(c=>{ if(!seen.has(c)){ const cur=rates.get(c); opts.push(new Option(`${c} — ${cur.txt}`, c)); }});
+
         const prevFrom = elements.from.value;
         const prevTo = elements.to.value;
-        
-        // Оновлюємо селекти
         elements.from.innerHTML = '';
         elements.to.innerHTML = '';
-        
-        options.forEach(opt => {
-          elements.from.add(opt.cloneNode(true));
-        });
-        
-        options.forEach(opt => {
-          elements.to.add(opt.cloneNode(true));
-        });
-        
-        // Встановлюємо значення
+        opts.forEach(o=>elements.from.add(o.cloneNode(true)));
+        opts.forEach(o=>elements.to.add(o.cloneNode(true)));
         elements.from.value = prevFrom || 'USD';
         elements.to.value = prevTo || 'UAH';
       }
 
-      // ========================================
-      // РОЗРАХУНОК
-      // ========================================
-      function calculate() {
+      function calculate(){
         hideError();
-        
         const amount = parseFloat(elements.amount.value) || 0;
         const fromCode = elements.from.value;
         const toCode = elements.to.value;
-        
-        if (!rates.size || !fromCode || !toCode) {
-          elements.resultValue.textContent = '—';
-          return;
-        }
-        
+        if (!rates.size || !fromCode || !toCode){ elements.resultValue.textContent='—'; return; }
+
         const fromRate = rates.get(fromCode)?.rate;
         const toRate = rates.get(toCode)?.rate;
-        
-        if (!(fromRate > 0) || !(toRate > 0)) {
-          elements.resultValue.textContent = '—';
-          return;
-        }
-        
-        // Конвертація: amount * (UAH/FROM) / (UAH/TO)
-        const result = amount * (fromRate / toRate);
-        const crossRate = fromRate / toRate;   // 1 FROM у TO
-        const inverseRate = 1 / crossRate;     // 1 TO у FROM
-        
-        // Відображення результату
-        elements.resultValue.textContent = isFinite(result) 
-          ? `${formatter2.format(result)} ${toCode}` 
-          : '—';
-        
-        elements.resultLabel.textContent = amount 
-          ? `${formatter2.format(amount)} ${fromCode} =` 
-          : 'Результат';
-        
-        elements.resultMeta.textContent = `Курс: 1 ${fromCode} = ${formatter4.format(crossRate)} ${toCode} • ${formatDate(exchangeDate)}`;
-        
-        // ✅ Оновлені 2 плитки: прямий і зворотний курс
-        elements.rateFrom.textContent = `1 ${fromCode} = ${formatter4.format(crossRate)} ${toCode}`;
-        elements.rateTo.textContent   = `1 ${toCode} = ${formatter4.format(inverseRate)} ${fromCode}`;
-        
-        // Анімація
+        if (!(fromRate>0) || !(toRate>0)){ elements.resultValue.textContent='—'; return; }
+
+        const res = amount * (fromRate / toRate);
+        const cross = fromRate / toRate;
+        const inv = 1 / cross;
+
+        elements.resultValue.textContent = isFinite(res) ? `${fmt2.format(res)} ${toCode}` : '—';
+        elements.resultLabel.textContent = amount ? `${fmt2.format(amount)} ${fromCode} =` : 'Результат';
+        elements.resultMeta.textContent = `Курс: 1 ${fromCode} = ${fmt4.format(cross)} ${toCode} • ${formatDate(exchangeDate)}`;
+
+        elements.rateFrom.textContent = `1 ${fromCode} = ${fmt4.format(cross)} ${toCode}`;
+        elements.rateTo.textContent   = `1 ${toCode} = ${fmt4.format(inv)} ${fromCode}`;
+
+        // === Пасхалка: повідомлення генеруємо без явних рядків у HTML ===
+        let msg = '';
+        if (amount >= 100000) msg = '\uD83D\uDCB8 \u0426\u0435 \u0432\u0436\u0435 \u0431\u0456\u0437\u043D\u0435\u0441-\u043A\u043B\u0430\u0441!';
+        else if (amount >= 5000) msg = '\uD83D\uDD25 \u041F\u043E\u0442\u0443\u0436\u043D\u043E\u0021';
+        else if (amount >= 1000) msg = '\uD83D\uDE0E \u0414\u0430\u0439 2 \u0433\u0440\u0438\u0432\u043D\u0456';
+        else if (amount > 100) msg = '\uD83D\uDE09 \u041D\u0435\u043F\u043E\u0433\u0430\u043D\u043E';
+        else if (amount > 0) msg = '\uD83E\uDE99 \u041F\u043E\u0447\u0430\u0442\u043E\u043A \u0432\u0435\u043B\u0438\u043A\u043E\u0433\u043E \u043A\u0430\u043F\u0456\u0442\u0430\u043B\u0443';
+
+        egg.textContent = msg;
+        egg.classList.toggle('show', !!msg);
+
+        // Невелика анімація результату
         elements.result.classList.add('pulse');
-        setTimeout(() => elements.result.classList.remove('pulse'), 400);
+        setTimeout(()=>elements.result.classList.remove('pulse'), 400);
       }
 
-      // ========================================
-      // ОБМІН ВАЛЮТ
-      // ========================================
-      function swapCurrencies() {
-        const temp = elements.from.value;
+      function swapCurrencies(){
+        const tmp = elements.from.value;
         elements.from.value = elements.to.value;
-        elements.to.value = temp;
+        elements.to.value = tmp;
         calculate();
       }
 
-      // ========================================
-      // ФОРМАТУВАННЯ ДАТИ
-      // ========================================
-      function formatDate(isoDate) {
-        if (!isoDate) return '—';
-        const date = new Date(isoDate + 'T00:00:00');
-        return date.toLocaleDateString('uk-UA', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        });
+      function formatDate(iso){
+        if (!iso) return '—';
+        const d = new Date(iso+'T00:00:00');
+        return d.toLocaleDateString('uk-UA',{year:'numeric',month:'long',day:'numeric'});
       }
 
-      // ========================================
-      // ПОМИЛКИ
-      // ========================================
-      function showError() {
-        elements.error.classList.add('show');
-      }
+      function showError(){ if(!elements.error){ return; } elements.error.classList.add('show'); }
+      function hideError(){ if(!elements.error){ return; } elements.error.classList.remove('show'); }
 
-      function hideError() {
-        elements.error.classList.remove('show');
-      }
-
-      // ========================================
-      // ЗАПУСК
-      // ========================================
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
       } else {
