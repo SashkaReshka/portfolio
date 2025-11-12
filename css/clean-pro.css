@@ -1,99 +1,131 @@
-/* === CLEAN-PRO THEME OVERRIDES === */
+/* === GITHUB-PRO THEME (surface ≈ GitHub) ===
+   Подключать ПОСЛЕ всех остальных стилей.
+   Ничего не трогаем в разметке.
+*/
 
-/* Палитра и тени */
-:root {
-  --bg: #f9fafb;
-  --fg: #111827;
-  --muted: #6b7280;
-  --card: #ffffff;
-  --line: #e5e7eb;
-  --accent: #2563eb;          /* electric blue */
-  --radius: 14px;
-  --shadow: 0 8px 24px rgba(17, 24, 39, 0.06);
+/* Палитра и базовые тени — а-ля GitHub */
+:root{
+  --bg: #f6f8fa;          /* canvas-default */
+  --fg: #24292f;          /* fg-default */
+  --muted:#57606a;        /* fg-muted */
+  --card:#ffffff;         /* canvas-inset */
+  --line:#d0d7de;         /* border-default */
+  --accent:#0969da;       /* accent-fg (blue) */
+  --radius:12px;
+  --shadow:0 1px 0 rgba(27,31,36,.04), 0 8px 24px rgba(140,149,159,.15);
 }
-:root.dark {
-  --bg: #0b1220;
-  --fg: #e5e7eb;
-  --muted: #9aa4b2;
-  --card: #0f172a;
-  --line: #1f2a44;
-  --accent: #60a5fa;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-}
-
-/* Сайдбар: глубина + деликатный фон */
-aside {
-  background: linear-gradient(180deg, var(--card), transparent);
-  box-shadow: 1px 0 0 var(--line), 6px 0 20px rgba(0,0,0,.03);
+:root.dark{
+  --bg:#0d1117;
+  --fg:#e6edf3;
+  --muted:#9ba1a6;
+  --card:#161b22;
+  --line:#30363d;
+  --accent:#58a6ff;
+  --shadow:0 0 0 1px rgba(240,246,252,0.05), 0 16px 32px rgba(1,4,9,.6);
 }
 
-/* Навигация: современный hover/active */
-.nav-link {
-  position: relative;
-  transition: color .2s ease, background .2s ease, transform .15s ease;
-}
-.nav-link:hover {
-  background: color-mix(in oklab, var(--accent) 12%, transparent);
-  color: var(--accent);
-}
-.nav-link.active {
-  background: color-mix(in oklab, var(--accent) 10%, transparent);
-  font-weight: 600;
-}
-.nav-link.active::before {
-  content: "";
-  position: absolute;
-  left: -8px;
-  top: 8px;
-  bottom: 8px;
-  width: 3px;
-  border-radius: 3px;
-  background: var(--accent);
-}
+/* Общая типографика и ссылки — спокойные, без подчёркивания */
+body{ background:var(--bg); color:var(--fg); }
+a{ color:var(--accent); text-decoration:none; }
+a:hover{ text-decoration:underline; }
 
-/* Кнопки */
-.btn {
-  border-radius: 12px;
-  transition: transform .12s ease, box-shadow .2s ease;
-}
-.btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
-.btn-accent { background: var(--accent); }
-.btn-accent:hover { filter: none; box-shadow: 0 8px 22px rgba(37, 99, 235, .25); }
-
-/* Карточки и плитки */
+/* Макет: меньше тени, больше «бордеров» */
 .card,
 .calculator-card,
-.calc-tile {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+.post-card,
+.hero-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:none;               /* GitHub почти без теней на карточках */
 }
-.calc-tile:hover { border-color: var(--accent); box-shadow: 0 10px 24px rgba(37,99,235,.12); }
+.card:hover,
+.post-card:hover{ box-shadow:var(--shadow); }
 
-/* Хлебные крошки: аккуратный акцент */
-.breadcrumb-link:hover { color: var(--accent); }
-.breadcrumb-current { color: var(--fg); }
-
-/* Результат калькулятора — приятный контраст */
-.calc-result {
-  background: linear-gradient(135deg, var(--card), var(--bg));
-  border: 1px solid var(--line);
-}
-.calc-result-value { color: var(--accent); }
-
-/* Бейджи под заголовками */
-.calc-badge {
-  background: color-mix(in oklab, var(--accent) 10%, transparent);
-  border-color: color-mix(in oklab, var(--accent) 25%, transparent);
-  color: var(--accent);
+/* Сайдбар — тонкая граница и легкий градиент */
+aside{
+  background:linear-gradient(180deg, var(--card), transparent);
+  border-right:1px solid var(--line);
+  box-shadow:none;
 }
 
-/* Анимации появления */
-.section, .card, .calc-tile, .calc-result {
-  animation: cp-fade .35s ease both;
+/* Навигация слева — как в Primer: pill-hover, жирный active */
+.nav-link{
+  border-radius:8px;
+  color:inherit;
+  transition:background .15s ease,color .15s ease, transform .12s ease;
 }
-@keyframes cp-fade {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: none; }
+.nav-link:hover{ background:rgba(9,105,218,.08); color:var(--fg); }
+.nav-link.active{
+  background:rgba(9,105,218,.12);
+  font-weight:600;
 }
+
+/* Хлебные крошки — серый текст + акцент на hover */
+.breadcrumb-link{ color:var(--muted); }
+.breadcrumb-link:hover{ color:var(--accent); }
+.breadcrumb-current{ color:var(--fg); }
+
+/* Формы — как на GitHub: тонкая рамка, сильный фокус */
+.calc-input,
+.calc-select,
+.input,
+textarea{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:8px;
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.calc-input:focus,
+.calc-select:focus,
+.input:focus,
+textarea:focus{
+  outline:none;
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(9,105,218,.2);
+}
+
+/* Кнопки — синие primary, без сильных теней */
+.btn{ border-radius:6px; }
+.btn-accent{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff !important;
+}
+.btn-accent:hover{ filter:brightness(.95); box-shadow:none; }
+
+/* Результат калькулятора — чёткая рамка, без «глянца» */
+.calc-result{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+}
+.calc-result-value{ color:var(--fg); } /* сумму оставим тёмной; акцент – в подписи ниже */
+.calc-result-meta{ color:var(--muted); }
+
+/* Плитки курсів — сетка уже адаптивная; делаем гитхабовский ховер */
+.calc-tiles{ gap:12px; }
+.calc-tile{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:8px;
+  transition:background .15s ease,border-color .15s ease;
+}
+.calc-tile:hover{ background:#f3f4f6; border-color:var(--line); }
+.dark .calc-tile:hover{ background:#151b23; }
+
+/* Табличные элементы и посты — «гитхабовские» линии */
+.post-content table,
+.post-content th,
+.post-content td{
+  border-color:var(--line);
+}
+.post-content a{ color:var(--accent); text-decoration:underline; }
+
+/* Мелкие штрихи */
+.calc-badge{
+  background:rgba(9,105,218,.08);
+  border:1px solid rgba(9,105,218,.24);
+  color:var(--accent);
+}
+.meta,.calc-footer-text{ color:var(--muted); }
