@@ -132,185 +132,241 @@
   <script src="../js/utils.js"></script>
 
   <!-- Логіка калькулятора + динамічна пасхалка -->
-  <script>
-    (function() {
-      'use strict';
+<script>
+  (function() {
+    'use strict';
 
-      // Додамо стилі для пасхалки ДИНАМІЧНО (щоб не світилися в CSS)
-      const style = document.createElement('style');
-      style.textContent = `
-        .calc-easter-egg{margin-top:8px;color:var(--muted);font-style:italic;font-size:14px;min-height:20px;opacity:0;transition:opacity .3s ease}
-        .calc-easter-egg.show{opacity:1;color:var(--accent)}
-      `;
-      document.head.appendChild(style);
+    // Додамо стилі для пасхалки ДИНАМІЧНО (щоб не світилися в CSS)
+    const style = document.createElement('style');
+    style.textContent = `
+      .calc-easter-egg{margin-top:8px;color:var(--muted);font-style:italic;font-size:14px;min-height:20px;opacity:0;transition:opacity .3s ease}
+      .calc-easter-egg.show{opacity:1;color:var(--accent)}
+    `;
+    document.head.appendChild(style);
 
-      // ЕЛЕМЕНТИ DOM
-      const elements = {
-        date: document.getElementById('datePick'),
-        amount: document.getElementById('amount'),
-        from: document.getElementById('currencyFrom'),
-        to: document.getElementById('currencyTo'),
-        swap: document.getElementById('btnSwap'),
-        result: document.getElementById('result'),
-        resultLabel: document.getElementById('resultLabel'),
-        resultValue: document.getElementById('resultValue'),
-        resultMeta: document.getElementById('resultMeta'),
-        rateFrom: document.getElementById('rateFrom'),
-        rateTo: document.getElementById('rateTo'),
-        error: document.getElementById('error'),
-        cacheStatus: document.getElementById('cacheStatus')
-      };
+    // ЕЛЕМЕНТИ DOM
+    const elements = {
+      date: document.getElementById('datePick'),
+      amount: document.getElementById('amount'),
+      from: document.getElementById('currencyFrom'),
+      to: document.getElementById('currencyTo'),
+      swap: document.getElementById('btnSwap'),
+      result: document.getElementById('result'),
+      resultLabel: document.getElementById('resultLabel'),
+      resultValue: document.getElementById('resultValue'),
+      resultMeta: document.getElementById('resultMeta'),
+      rateFrom: document.getElementById('rateFrom'),
+      rateTo: document.getElementById('rateTo'),
+      error: document.getElementById('error'),
+      cacheStatus: document.getElementById('cacheStatus')
+    };
 
-      // ДИНАМІЧНО створюємо елемент пасхалки — його НЕ буде у вихідному HTML
-      const egg = document.createElement('div');
-      egg.id = 'easterEgg';
-      egg.className = 'calc-easter-egg';
-      elements.result.appendChild(egg);
+    // ДИНАМІЧНО створюємо елемент пасхалки — його НЕ буде у вихідному HTML
+    const egg = document.createElement('div');
+    egg.id = 'easterEgg';
+    egg.className = 'calc-easter-egg';
+    elements.result.appendChild(egg);
 
-      // КОНФІГ
-      const NBU_API = 'https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange';
-      const LOCALE = 'uk-UA';
-      const fmt2 = new Intl.NumberFormat(LOCALE,{minimumFractionDigits:2,maximumFractionDigits:2});
-      const fmt4 = new Intl.NumberFormat(LOCALE,{minimumFractionDigits:4,maximumFractionDigits:4});
+    // КОНФІГ
+    const NBU_API = 'https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange';
+    const LOCALE = 'uk-UA';
+    const fmt2 = new Intl.NumberFormat(LOCALE,{minimumFractionDigits:2,maximumFractionDigits:2});
+    const fmt4 = new Intl.NumberFormat(LOCALE,{minimumFractionDigits:4,maximumFractionDigits:4});
 
-      // СТАН
-      let rates = new Map();
-      let exchangeDate = null;
+    // СТАН
+    let rates = new Map();
+    let exchangeDate = null;
 
-      function init() {
-        const today = new Date().toISOString().slice(0,10);
-        elements.date.value = today;
+    function init() {
+      const today = new Date().toISOString().slice(0,10);
+      elements.date.value = today;
 
-        elements.date.addEventListener('change', loadRates);
-        elements.amount.addEventListener('input', calculate);
-        elements.from.addEventListener('change', calculate);
-        elements.to.addEventListener('change', calculate);
-        elements.swap.addEventListener('click', swapCurrencies);
+      elements.date.addEventListener('change', loadRates);
+      elements.amount.addEventListener('input', calculate);
+      elements.from.addEventListener('change', calculate);
+      elements.to.addEventListener('change', calculate);
+      elements.swap.addEventListener('click', swapCurrencies);
 
-        loadRates();
-      }
+      loadRates();
+    }
 
-      async function loadRates() {
-        try {
-          hideError();
-          const dateISO = elements.date.value || new Date().toISOString().slice(0,10);
-          const dateYMD = dateISO.replace(/-/g,'');
-          const cacheKey = `nbu_rates_${dateYMD}`;
-          const cached = localStorage.getItem(cacheKey);
+    async function loadRates() {
+      try {
+        hideError();
+        const dateISO = elements.date.value || new Date().toISOString().slice(0,10);
+        const dateYMD = dateISO.replace(/-/g,'');
+        const cacheKey = `nbu_rates_${dateYMD}`;
+        const cached = localStorage.getItem(cacheKey);
 
-          if (cached) {
-            applyRates(JSON.parse(cached));
+        // 🧠 ПІДТРИМКА СТАРОГО І НОВОГО ФОРМАТІВ КЕШУ
+        if (cached) {
+          try {
+            const raw = JSON.parse(cached);
+            let payload;
+
+            if (Array.isArray(raw)) {
+              // Старий формат: зберігався просто масив з API
+              payload = { list: raw, dateISO };
+            } else if (raw && Array.isArray(raw.list)) {
+              // Новий формат: { list, dateISO }
+              payload = {
+                list: raw.list,
+                dateISO: raw.dateISO || dateISO
+              };
+            } else {
+              throw new Error('Unknown cache format');
+            }
+
+            applyRates(payload);
             elements.cacheStatus.textContent = 'Кеш: localStorage ✓';
             return;
+          } catch (err) {
+            console.warn('Bad cache format, refetching from API', err);
+            // Чистимо битий кеш
+            localStorage.removeItem(cacheKey);
           }
-
-          elements.cacheStatus.textContent = 'Кеш: завантаження...';
-          const resp = await fetch(`${NBU_API}?date=${dateYMD}&json`, { cache: 'no-store' });
-          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-          const list = await resp.json();
-
-          const payload = { list, dateISO };
-          localStorage.setItem(cacheKey, JSON.stringify(payload));
-          applyRates(payload);
-          elements.cacheStatus.textContent = 'Кеш: оновлено ✓';
-        } catch (e){
-          console.error(e);
-          showError();
-          elements.cacheStatus.textContent = 'Кеш: помилка ✗';
         }
+
+        elements.cacheStatus.textContent = 'Кеш: завантаження...';
+        const resp = await fetch(`${NBU_API}?date=${dateYMD}&json`, { cache: 'no-store' });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const list = await resp.json();
+
+        const payload = { list, dateISO };
+        localStorage.setItem(cacheKey, JSON.stringify(payload));
+        applyRates(payload);
+        elements.cacheStatus.textContent = 'Кеш: оновлено ✓';
+      } catch (e){
+        console.error(e);
+        showError();
+        if (elements.cacheStatus) elements.cacheStatus.textContent = 'Кеш: помилка ✗';
+      }
+    }
+
+    function applyRates(payload){
+      rates.clear();
+      // UAH = 1
+      rates.set('UAH', {
+        cc:'UAH',
+        txt:'Українська гривня',
+        rate:1,
+        exchangedate: formatDate(payload.dateISO)
+      });
+
+      (payload.list||[]).forEach(it=>{
+        if (it && it.cc && typeof it.rate === 'number'){
+          rates.set(it.cc.toUpperCase(), {
+            cc: it.cc.toUpperCase(),
+            txt: it.txt,
+            rate: it.rate,
+            exchangedate: it.exchangedate
+          });
+        }
+      });
+      exchangeDate = payload.dateISO;
+      buildSelects();
+      calculate();
+    }
+
+    function buildSelects(){
+      const opts = [];
+      const preferred = ['UAH','USD','EUR','PLN','GBP','CHF','CZK','HUF','RON','TRY','CAD','JPY','CNY','GEL','MDL'];
+      const seen = new Set();
+      preferred.forEach(c=>{
+        if(rates.has(c)&&!seen.has(c)){
+          const cur=rates.get(c);
+          opts.push(new Option(`${c} — ${cur.txt}`, c));
+          seen.add(c);
+        }
+      });
+      Array.from(rates.keys()).sort().forEach(c=>{
+        if(!seen.has(c)){
+          const cur=rates.get(c);
+          opts.push(new Option(`${c} — ${cur.txt}`, c));
+        }
+      });
+
+      const prevFrom = elements.from.value;
+      const prevTo = elements.to.value;
+      elements.from.innerHTML = '';
+      elements.to.innerHTML = '';
+      opts.forEach(o=>elements.from.add(o.cloneNode(true)));
+      opts.forEach(o=>elements.to.add(o.cloneNode(true)));
+      elements.from.value = prevFrom || 'USD';
+      elements.to.value = prevTo || 'UAH';
+    }
+
+    function calculate(){
+      hideError();
+      const amount = parseFloat(elements.amount.value) || 0;
+      const fromCode = elements.from.value;
+      const toCode = elements.to.value;
+      if (!rates.size || !fromCode || !toCode){
+        elements.resultValue.textContent='—';
+        return;
       }
 
-      function applyRates(payload){
-        rates.clear();
-        // UAH = 1
-        rates.set('UAH', { cc:'UAH', txt:'\u0423\u043A\u0440\u0430\u0457\u043D\u0441\u044C\u043A\u0430 \u0433\u0440\u0438\u0432\u043D\u044F', rate:1, exchangedate: formatDate(payload.dateISO) });
-        (payload.list||[]).forEach(it=>{
-          if (it && it.cc && typeof it.rate === 'number'){
-            rates.set(it.cc.toUpperCase(), { cc: it.cc.toUpperCase(), txt: it.txt, rate: it.rate, exchangedate: it.exchangedate });
-          }
-        });
-        exchangeDate = payload.dateISO;
-        buildSelects();
-        calculate();
+      const fromRate = rates.get(fromCode)?.rate;
+      const toRate = rates.get(toCode)?.rate;
+      if (!(fromRate>0) || !(toRate>0)){
+        elements.resultValue.textContent='—';
+        return;
       }
 
-      function buildSelects(){
-        const opts = [];
-        const preferred = ['UAH','USD','EUR','PLN','GBP','CHF','CZK','HUF','RON','TRY','CAD','JPY','CNY','GEL','MDL'];
-        const seen = new Set();
-        preferred.forEach(c=>{ if(rates.has(c)&&!seen.has(c)){ const cur=rates.get(c); opts.push(new Option(`${c} — ${cur.txt}`, c)); seen.add(c); }});
-        Array.from(rates.keys()).sort().forEach(c=>{ if(!seen.has(c)){ const cur=rates.get(c); opts.push(new Option(`${c} — ${cur.txt}`, c)); }});
+      const res = amount * (fromRate / toRate);
+      const cross = fromRate / toRate;
+      const inv = 1 / cross;
 
-        const prevFrom = elements.from.value;
-        const prevTo = elements.to.value;
-        elements.from.innerHTML = '';
-        elements.to.innerHTML = '';
-        opts.forEach(o=>elements.from.add(o.cloneNode(true)));
-        opts.forEach(o=>elements.to.add(o.cloneNode(true)));
-        elements.from.value = prevFrom || 'USD';
-        elements.to.value = prevTo || 'UAH';
-      }
+      elements.resultValue.textContent = isFinite(res) ? `${fmt2.format(res)} ${toCode}` : '—';
+      elements.resultLabel.textContent = amount ? `${fmt2.format(amount)} ${fromCode} =` : 'Результат';
+      elements.resultMeta.textContent = `Курс: 1 ${fromCode} = ${fmt4.format(cross)} ${toCode} • ${formatDate(exchangeDate)}`;
 
-      function calculate(){
-        hideError();
-        const amount = parseFloat(elements.amount.value) || 0;
-        const fromCode = elements.from.value;
-        const toCode = elements.to.value;
-        if (!rates.size || !fromCode || !toCode){ elements.resultValue.textContent='—'; return; }
+      elements.rateFrom.textContent = `1 ${fromCode} = ${fmt4.format(cross)} ${toCode}`;
+      elements.rateTo.textContent   = `1 ${toCode} = ${fmt4.format(inv)} ${fromCode}`;
 
-        const fromRate = rates.get(fromCode)?.rate;
-        const toRate = rates.get(toCode)?.rate;
-        if (!(fromRate>0) || !(toRate>0)){ elements.resultValue.textContent='—'; return; }
+      // Пасхалка
+      let msg = '';
+      if (amount >= 100000) msg = '💸 Це вже бізнес-клас!';
+      else if (amount >= 5000) msg = '🔥 Потужно!';
+      else if (amount >= 1000) msg = '😎 Дай 2 гривні';
+      else if (amount > 100) msg = '😉 Непогано';
+      else if (amount > 0) msg = '🪙 Початок великого капіталу';
 
-        const res = amount * (fromRate / toRate);
-        const cross = fromRate / toRate;
-        const inv = 1 / cross;
+      egg.textContent = msg;
+      egg.classList.toggle('show', !!msg);
 
-        elements.resultValue.textContent = isFinite(res) ? `${fmt2.format(res)} ${toCode}` : '—';
-        elements.resultLabel.textContent = amount ? `${fmt2.format(amount)} ${fromCode} =` : 'Результат';
-        elements.resultMeta.textContent = `Курс: 1 ${fromCode} = ${fmt4.format(cross)} ${toCode} • ${formatDate(exchangeDate)}`;
+      elements.result.classList.add('pulse');
+      setTimeout(()=>elements.result.classList.remove('pulse'), 400);
+    }
 
-        elements.rateFrom.textContent = `1 ${fromCode} = ${fmt4.format(cross)} ${toCode}`;
-        elements.rateTo.textContent   = `1 ${toCode} = ${fmt4.format(inv)} ${fromCode}`;
+    function swapCurrencies(){
+      const tmp = elements.from.value;
+      elements.from.value = elements.to.value;
+      elements.to.value = tmp;
+      calculate();
+    }
 
-        // === Пасхалка: повідомлення генеруємо без явних рядків у HTML ===
-        let msg = '';
-        if (amount >= 100000) msg = '\uD83D\uDCB8 \u0426\u0435 \u0432\u0436\u0435 \u0431\u0456\u0437\u043D\u0435\u0441-\u043A\u043B\u0430\u0441!';
-        else if (amount >= 5000) msg = '\uD83D\uDD25 \u041F\u043E\u0442\u0443\u0436\u043D\u043E\u0021';
-        else if (amount >= 1000) msg = '\uD83D\uDE0E \u0414\u0430\u0439 2 \u0433\u0440\u0438\u0432\u043D\u0456';
-        else if (amount > 100) msg = '\uD83D\uDE09 \u041D\u0435\u043F\u043E\u0433\u0430\u043D\u043E';
-        else if (amount > 0) msg = '\uD83E\uDE99 \u041F\u043E\u0447\u0430\u0442\u043E\u043A \u0432\u0435\u043B\u0438\u043A\u043E\u0433\u043E \u043A\u0430\u043F\u0456\u0442\u0430\u043B\u0443';
+    function formatDate(iso){
+      if (!iso) return '—';
+      const d = new Date(iso+'T00:00:00');
+      return d.toLocaleDateString('uk-UA',{year:'numeric',month:'long',day:'numeric'});
+    }
 
-        egg.textContent = msg;
-        egg.classList.toggle('show', !!msg);
+    function showError(){
+      if(!elements.error) return;
+      elements.error.classList.add('show');
+    }
+    function hideError(){
+      if(!elements.error) return;
+      elements.error.classList.remove('show');
+    }
 
-        // Невелика анімація результату
-        elements.result.classList.add('pulse');
-        setTimeout(()=>elements.result.classList.remove('pulse'), 400);
-      }
-
-      function swapCurrencies(){
-        const tmp = elements.from.value;
-        elements.from.value = elements.to.value;
-        elements.to.value = tmp;
-        calculate();
-      }
-
-      function formatDate(iso){
-        if (!iso) return '—';
-        const d = new Date(iso+'T00:00:00');
-        return d.toLocaleDateString('uk-UA',{year:'numeric',month:'long',day:'numeric'});
-      }
-
-      function showError(){ if(!elements.error){ return; } elements.error.classList.add('show'); }
-      function hideError(){ if(!elements.error){ return; } elements.error.classList.remove('show'); }
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-      } else {
-        init();
-      }
-    })();
-  </script>
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
 </body>
 </html>
