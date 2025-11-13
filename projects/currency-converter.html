@@ -190,58 +190,71 @@
       loadRates();
     }
 
-    async function loadRates() {
-      try {
-        hideError();
-        const dateISO = elements.date.value || new Date().toISOString().slice(0,10);
-        const dateYMD = dateISO.replace(/-/g,'');
-        const cacheKey = `nbu_rates_${dateYMD}`;
-        const cached = localStorage.getItem(cacheKey);
+async function loadRates() {
+        try {
+          hideError();
 
-        // 🧠 ПІДТРИМКА СТАРОГО І НОВОГО ФОРМАТІВ КЕШУ
-        if (cached) {
-          try {
-            const raw = JSON.parse(cached);
-            let payload;
+          const dateISO = elements.date.value || new Date().toISOString().slice(0, 10);
+          const dateYMD = dateISO.replace(/-/g, '');
 
-            if (Array.isArray(raw)) {
-              // Старий формат: зберігався просто масив з API
-              payload = { list: raw, dateISO };
-            } else if (raw && Array.isArray(raw.list)) {
-              // Новий формат: { list, dateISO }
-              payload = {
-                list: raw.list,
-                dateISO: raw.dateISO || dateISO
-              };
-            } else {
-              throw new Error('Unknown cache format');
+          const cacheKey = `nbu_rates_${dateYMD}`;
+          const cached = localStorage.getItem(cacheKey);
+
+          // --- 1. Підтримка старого й нового формату кешу ---
+          if (cached) {
+            try {
+              const raw = JSON.parse(cached);
+              let payload;
+
+              if (Array.isArray(raw)) {
+                // Старий формат: збережено просто масив з API
+                payload = { list: raw, dateISO };
+              } else if (raw && Array.isArray(raw.list)) {
+                // Новий формат: { list, dateISO }
+                payload = {
+                  list: raw.list,
+                  dateISO: raw.dateISO || dateISO
+                };
+              } else {
+                throw new Error('Unknown cache format');
+              }
+
+              applyRates(payload);
+              elements.cacheStatus.textContent = 'Кеш: localStorage ✓';
+              return;
+            } catch (e) {
+              console.warn('Bad cache format, refetching from API', e);
+              // Якщо кеш битий — прибираємо й тягнемо свіжі дані
+              localStorage.removeItem(cacheKey);
             }
+          }
 
-            applyRates(payload);
-            elements.cacheStatus.textContent = 'Кеш: localStorage ✓';
-            return;
-          } catch (err) {
-            console.warn('Bad cache format, refetching from API', err);
-            // Чистимо битий кеш
-            localStorage.removeItem(cacheKey);
+          // --- 2. Якщо кешу немає або він битий — йдемо в API ---
+          elements.cacheStatus.textContent = 'Кеш: завантаження...';
+          const response = await fetch(
+            `${NBU_API}?date=${dateYMD}&json`,
+            { cache: 'no-store' }
+          );
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+
+          const list = await response.json(); // масив об'єктів НБУ
+
+          const payload = { list, dateISO };
+          localStorage.setItem(cacheKey, JSON.stringify(payload));
+
+          applyRates(payload);
+          elements.cacheStatus.textContent = 'Кеш: оновлено ✓';
+        } catch (error) {
+          console.error('Помилка завантаження курсів:', error);
+          showError();
+          if (elements.cacheStatus) {
+            elements.cacheStatus.textContent = 'Кеш: помилка ✗';
           }
         }
-
-        elements.cacheStatus.textContent = 'Кеш: завантаження...';
-        const resp = await fetch(`${NBU_API}?date=${dateYMD}&json`, { cache: 'no-store' });
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        const list = await resp.json();
-
-        const payload = { list, dateISO };
-        localStorage.setItem(cacheKey, JSON.stringify(payload));
-        applyRates(payload);
-        elements.cacheStatus.textContent = 'Кеш: оновлено ✓';
-      } catch (e){
-        console.error(e);
-        showError();
-        if (elements.cacheStatus) elements.cacheStatus.textContent = 'Кеш: помилка ✗';
       }
-    }
 
     function applyRates(payload){
       rates.clear();
