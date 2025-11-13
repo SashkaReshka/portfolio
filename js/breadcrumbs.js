@@ -57,13 +57,13 @@ function initBreadcrumbs(customData = {}) {
   
   switch (filename) {
     case 'projects.html':
-      breadcrumbsHTML = generateBreadcrumbs({ currentPage: 'Проєкти' });
+      breadcrumbsHTML = generateBreadcrumbs({ currentPage: '💡 Інтерактивні крафти' });
       break;
       
     case 'project.html':
       breadcrumbsHTML = generateBreadcrumbs({
         currentPage: customData.projectTitle || 'Проєкт',
-        parentPage: 'Проєкти',
+        parentPage: '💡 Інтерактивні крафти',
         parentUrl: 'projects.html'
       });
       break;

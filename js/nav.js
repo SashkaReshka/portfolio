@@ -60,7 +60,7 @@ function generateNavHTML(projects) {
       <nav>
         <div class="nav-title">Навігація</div>
         <a class="nav-link" href="/portfolio/index.html">🏠 <span>Головна</span></a>
-<a class="nav-link" href="/portfolio/projects.html">🧪 <span>Інтерактивні крафти</span></a>
+<a class="nav-link" href="/portfolio/projects.html">💡 <span>Інтерактивні крафти</span></a>
 <a class="nav-link" href="/portfolio/gpts.html">🤖 <span>GPTs крафти</span></a>
 <a class="nav-link" href="/portfolio/blog.html">📝 <span>Блог</span></a>
         
