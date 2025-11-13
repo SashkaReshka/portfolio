@@ -5,24 +5,24 @@
 
 /* CSS-змінні для світлої теми */
 :root {
-  --bg: #faf9f5;
-  --fg: #2d2d2d;
-  --muted: #6b6b6b;
-  --card: #f5f4ed;
-  --line: #e8e7e0;
-  --accent: #D94A1A;
-  --radius: 16px;
-  --shadow: 0 4px 12px rgba(0,0,0,.04);
+--bg: #F6F7FB;         
+--fg: #1E1E1E;         
+--muted: #7D8490;      
+--card: #FFFFFF;       
+--line: #E3E5EB;       
+--accent: #6A5CFF;     
+--radius: 18px;
+--shadow: 0 8px 20px rgba(0,0,0,.04);
 }
 
 /* CSS-змінні для темної теми */
 :root.dark {
-  --bg: #0d1117;
-  --fg: #e6edf3;
-  --muted: #9ba7b4;
-  --card: #161b22;
-  --line: #222936;
-  --accent: #FF9670;
+--bg: #0F1115;         
+--fg: #ECEFF7;
+--muted: #8F96A3;
+--card: #16181D;
+--line: #24262D;
+--accent: #8E7BFF;
 }
 
 /* Базові стилі */
