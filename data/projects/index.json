@@ -11,7 +11,7 @@
       "НБУ"
     ],
     "date": "2025-01-10",
-    "thumbnail": "assets/images/currency-converter.jpg",
+    "thumbnail": "assets/images/currency_exchange.webp",
     "featured": true,
 	"isCalculator": true,
     "calculatorPath": "projects/currency-converter.html"
