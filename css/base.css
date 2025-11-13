@@ -1,28 +1,29 @@
 /* ========================================
    BASE.CSS - Базові стилі (критичні)
    Завантажуються першими на всіх сторінках
+   Оновлена AI-палітра (Neo-AI Clean / Neural Dark)
    ======================================== */
 
 /* CSS-змінні для світлої теми */
 :root {
---bg: #F6F7FB;         
---fg: #1E1E1E;         
---muted: #7D8490;      
---card: #FFFFFF;       
---line: #E3E5EB;       
---accent: #6A5CFF;     
---radius: 18px;
---shadow: 0 8px 20px rgba(0,0,0,.04);
+  --bg: #F6F7FB;             /* фоновий колір сторінки */
+  --fg: #1E1E1E;             /* основний текст */
+  --muted: #7D8490;          /* вторинний текст, підписи */
+  --card: #FFFFFF;           /* фон карток, панелей, блоків */
+  --line: #E3E5EB;           /* бордери, роздільники */
+  --accent: #6A5CFF;         /* основний акцент (AI-фиолетовий) */
+  --radius: 18px;            /* базовий радіус скруглення */
+  --shadow: 0 8px 20px rgba(15, 17, 21, 0.06); /* тінь для карток/модалок */
 }
 
 /* CSS-змінні для темної теми */
 :root.dark {
---bg: #0F1115;         
---fg: #ECEFF7;
---muted: #8F96A3;
---card: #16181D;
---line: #24262D;
---accent: #8E7BFF;
+  --bg: #0F1115;
+  --fg: #ECEFF7;
+  --muted: #8F96A3;
+  --card: #16181D;
+  --line: #24262D;
+  --accent: #8E7BFF;
 }
 
 /* Базові стилі */
@@ -30,20 +31,33 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
 body {
   margin: 0;
-  font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
+    Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   background: var(--bg);
   color: var(--fg);
 }
 
+/* Посилання */
 a {
   color: var(--accent);
   text-decoration: none;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+a:hover {
+  opacity: 0.9;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 /* Макет сторінки */
