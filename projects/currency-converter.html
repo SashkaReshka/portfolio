@@ -128,14 +128,6 @@
   (function() {
     'use strict';
 
-    // Додамо стилі для пасхалки ДИНАМІЧНО (щоб не світилися в CSS)
-    const style = document.createElement('style');
-    style.textContent = `
-      .calc-easter-egg{margin-top:8px;color:var(--muted);font-style:italic;font-size:14px;min-height:20px;opacity:0;transition:opacity .3s ease}
-      .calc-easter-egg.show{opacity:1;color:var(--accent)}
-    `;
-    document.head.appendChild(style);
-
     // ЕЛЕМЕНТИ DOM
     const elements = {
       date: document.getElementById('datePick'),
@@ -152,12 +144,6 @@
       error: document.getElementById('error'),
       cacheStatus: document.getElementById('cacheStatus')
     };
-
-    // ДИНАМІЧНО створюємо елемент пасхалки — його НЕ буде у вихідному HTML
-    const egg = document.createElement('div');
-    egg.id = 'easterEgg';
-    egg.className = 'calc-easter-egg';
-    elements.result.appendChild(egg);
 
     // КОНФІГ
     const NBU_API = 'https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange';
@@ -328,17 +314,6 @@ async function loadRates() {
 
       elements.rateFrom.textContent = `1 ${fromCode} = ${fmt4.format(cross)} ${toCode}`;
       elements.rateTo.textContent   = `1 ${toCode} = ${fmt4.format(inv)} ${fromCode}`;
-
-      // Пасхалка
-      let msg = '';
-      if (amount >= 100000) msg = '💸 Це вже бізнес-клас!';
-      else if (amount >= 5000) msg = '🔥 Потужно!';
-      else if (amount >= 1000) msg = '😎 Дай 2 гривні';
-      else if (amount > 100) msg = '😉 Непогано';
-      else if (amount > 0) msg = '🪙 Початок великого капіталу';
-
-      egg.textContent = msg;
-      egg.classList.toggle('show', !!msg);
 
       elements.result.classList.add('pulse');
       setTimeout(()=>elements.result.classList.remove('pulse'), 400);
