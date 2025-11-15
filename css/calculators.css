@@ -79,7 +79,7 @@
    ======================================== */
 
 .calc-body {
-  padding: 0px 0px;
+  padding: 0px 28px;
 }
 
 /* ========================================
@@ -535,14 +535,29 @@
   color: #93c5fd;
 }
 
-.calc-text {
+/* Верхній описовий блок під заголовком */
+.calc-text--intro {
   width: 100%;
   box-sizing: border-box;
 
-  background: rgba(79, 180, 255, 0.04);
-  
-  border: 1px solid rgba(79, 180, 255, 0.35);
+  background: rgba(255, 255, 255, 0.6);       /* майже білий, не зливається */
+  border: 1px solid rgba(0, 0, 0, 0.06);       /* дуже тонка нейтральна рамка */
+  padding: 14px 18px;
+  margin: 20px 0;
+  border-radius: 8px;
 
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-primary, #1a1a1a);
+}
+
+/* Нижній інформаційний блок з акцентом AICRAFT */
+.calc-info-block {
+  width: 100%;
+  box-sizing: border-box;
+
+  background: rgba(79, 180, 255, 0.04);        /* легка фірмова підкладка */
+  border: 1px solid rgba(79, 180, 255, 0.35);  /* тонка акцентна рамка */
   padding: 14px 18px;
   margin: 20px 0;
   border-radius: 8px;
@@ -553,29 +568,8 @@
 
   transition: border-color 0.2s ease, background 0.2s ease;
 }
-.calc-text:hover {
-  border-color: rgba(79, 180, 255, 0.6);
+
+.calc-info-block:hover {
   background: rgba(79, 180, 255, 0.06);
+  border-color: rgba(79, 180, 255, 0.6);
 }
-
-.calc-text h3,
-.calc-text h4 {
-  margin: 0 0 8px 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #0f3450;
-}
-
-.calc-text p,
-.calc-text ul {
-  margin: 0 0 10px 0;
-}
-
-.calc-text ul {
-  padding-left: 18px;
-}
-
-.calc-text li {
-  margin-bottom: 4px;
-}
-
