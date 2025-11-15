@@ -241,7 +241,6 @@
 
 /* Головний результат */
 .calc-result {
-  margin-top: 32px;
   padding: 28px;
   background: linear-gradient(135deg, var(--card) 0%, var(--bg) 100%);
   border: 1px solid var(--line);
@@ -493,7 +492,6 @@
   /* Результат */
   .calc-result {
     padding: 24px 20px;
-    margin-top: 24px;
   }
   
   .calc-result-value {
