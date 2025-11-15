@@ -1,0 +1,27 @@
+/* ================================
+   SELF-HOSTED INTER (VARIABLE)
+   ================================ */
+
+@font-face {
+  font-family: 'Inter';
+  src: url('InterVariable.woff2') format('woff2-variations'),
+       url('InterVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('InterVariable-Italic.woff2') format('woff2-variations'),
+       url('InterVariable-Italic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Використання */
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-optical-sizing: auto; /* обовʼязково для variable */
+}
