@@ -363,7 +363,6 @@
 .calc-info {
   padding: 16px 20px;
   background: rgba(59, 130, 246, 0.08);
-  border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 12px;
   color: #3b82f6;
   font-size: 13px;
@@ -541,7 +540,6 @@
   box-sizing: border-box;
 
   background: rgba(255, 255, 255, 0.6);       /* майже білий, не зливається */
-  border: 1px solid rgba(0, 0, 0, 0.06);       /* дуже тонка нейтральна рамка */
   padding: 14px 18px;
   margin: 20px 0;
   border-radius: 8px;
@@ -557,7 +555,6 @@
   box-sizing: border-box;
 
   background: rgba(79, 180, 255, 0.04);        /* легка фірмова підкладка */
-  border: 1px solid rgba(79, 180, 255, 0.35);  /* тонка акцентна рамка */
   padding: 14px 18px;
   margin: 20px 0;
   border-radius: 8px;
@@ -574,35 +571,39 @@
   border-color: rgba(79, 180, 255, 0.6);
 }
 
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
+/* ========================================
+   ТЕМНА ТЕМА: описовий блок під заголовком
+   ======================================== */
+.dark .calc-text--intro {
+  background: rgba(148, 163, 184, 0.12);        /* мʼяка світло-сіра вуаль */
+  border: 1px solid rgba(148, 163, 184, 0.35);  /* тонка рамка з легким контрастом */
+  color: rgba(249, 250, 251, 0.90);             /* майже білий текст */
 
-  /* Верхній вступний блок */
-  .calc-text--intro {
-    background: rgba(255,255,255,0.04);          /* дуже легка світла вуаль */
-    border: 1px solid rgba(255,255,255,0.08);     /* тонка світла рамка */
-    color: rgba(255,255,255,0.85);
-  }
+  /* щоб не виглядало як «чужий» елемент */
+  border-radius: 8px;
+}
 
-  /* Нижній інформаційний блок з акцентом AICRAFT */
-  .calc-info-block {
-    background: rgba(79, 180, 255, 0.06);         /* світлий акцентований фон */
-    border: 1px solid rgba(79, 180, 255, 0.45);    /* трохи яскравіша рамка */
-    color: rgba(255,255,255,0.90);
-  }
+/* Заголовки всередині */
+.dark .calc-text--intro h3,
+.dark .calc-text--intro h4 {
+  color: rgba(249, 250, 251, 0.95);
+}
 
-  .calc-info-block:hover {
-    background: rgba(79, 180, 255, 0.10);
-    border-color: rgba(79, 180, 255, 0.70);
-  }
+/* ========================================
+   ТЕМНА ТЕМА: нижній інформаційний блок
+   ======================================== */
+.dark .calc-info-block {
+  background: rgba(59, 130, 246, 0.18);         /* помітніший, але не кислотний синій */
+  border: 1px solid rgba(96, 165, 250, 0.75);   /* чітка, але тонка рамка */
+  color: rgba(239, 246, 255, 0.95);             /* світлий текст, добре видимий */
+}
 
-  .calc-info-block h3,
-  .calc-info-block h4 {
-    color: rgba(255,255,255,0.95);
-  }
+.dark .calc-info-block:hover {
+  background: rgba(59, 130, 246, 0.24);
+  border-color: rgba(147, 197, 253, 0.9);
+}
 
-  .calc-text--intro h3,
-  .calc-text--intro h4 {
-    color: rgba(255,255,255,0.95);
-  }
+.dark .calc-info-block h3,
+.dark .calc-info-block h4 {
+  color: rgba(239, 246, 255, 0.98);
 }
