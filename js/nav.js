@@ -53,7 +53,7 @@ function generateNavHTML(projects) {
             <div class="logo-initial">О</div>
           </div>
         </a>
-        <p class="tagline">майстерня практичних ШІ-рішень</p>
+        <p class="tagline">Майстерня ШІ-рішень</p>
       </div>
       
       <!-- Навігація -->
