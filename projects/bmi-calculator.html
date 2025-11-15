@@ -250,6 +250,43 @@
             </div>
           </div>
 
+          <!-- Шкала ІМТ -->
+          <div class="bmi-scale" aria-hidden="true">
+            <div class="bmi-scale-header">
+              <span class="bmi-scale-title">Шкала ІМТ</span>
+              <span class="bmi-scale-caption">12–40, з поділом по категоріях</span>
+            </div>
+
+            <div class="bmi-scale-wrapper">
+              <div class="bmi-scale-bar">
+                <div class="bmi-segment bmi-segment--under">
+                  <span class="bmi-segment-label">&lt;18.5</span>
+                </div>
+                <div class="bmi-segment bmi-segment--normal">
+                  <span class="bmi-segment-label">18.5–24.9</span>
+                </div>
+                <div class="bmi-segment bmi-segment--over">
+                  <span class="bmi-segment-label">25–29.9</span>
+                </div>
+                <div class="bmi-segment bmi-segment--obese">
+                  <span class="bmi-segment-label">30+</span>
+                </div>
+              </div>
+
+              <div class="bmi-scale-marker" id="bmiScaleMarker">
+                <span class="bmi-scale-marker-dot"></span>
+                <span class="bmi-scale-marker-label" id="bmiScaleMarkerLabel">ІМТ: —</span>
+              </div>
+            </div>
+
+            <div class="bmi-scale-legend">
+              <span class="bmi-legend-item bmi-legend-item--under">Дефіцит</span>
+              <span class="bmi-legend-item bmi-legend-item--normal">Норма</span>
+              <span class="bmi-legend-item bmi-legend-item--over">Надмірна маса</span>
+              <span class="bmi-legend-item bmi-legend-item--obese">Ожиріння</span>
+            </div>
+          </div>
+
           <!-- Плитки KPI -->
           <div class="calc-tiles">
             <div class="calc-tile">
@@ -349,8 +386,10 @@
   <!-- Логіка калькулятора ІМТ -->
   <script>
     (function() {
-      'use strict';
-
+      'use strict';	  
+	  
+	  const bmiScaleMarker = document.getElementById('bmiScaleMarker');
+      const bmiScaleMarkerLabel = document.getElementById('bmiScaleMarkerLabel');
       const heightEl = document.getElementById('height');
       const weightEl = document.getElementById('weight');
       const bmiResult = document.getElementById('bmiResult');
@@ -363,6 +402,10 @@
 
       const fmt1 = new Intl.NumberFormat('uk-UA', { maximumFractionDigits: 1 });
       const fmt1kg = new Intl.NumberFormat('uk-UA', { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+	  
+	  function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
 
       function init() {
         heightEl.addEventListener('input', recalc);
@@ -395,6 +438,7 @@
         bmiCategoryEl.textContent = category.label;
         bmiRangeEl.textContent = fmt1kg.format(wMin) + '–' + fmt1kg.format(wMax) + ' кг';
         bmiDeltaEl.textContent = deltaText;
+		updateScale(bmi);
 
         bmiResult.classList.add('pulse');
         setTimeout(() => bmiResult.classList.remove('pulse'), 400);
@@ -421,6 +465,21 @@
           const span = Math.min(toLow, toHigh);
           return 'Ви в межах норми. Запас до меж діапазону ≈ ' + fmt1kg.format(span) + ' кг.';
         }
+		
+		function updateScale(bmi) {
+  if (!bmiScaleMarker || !bmiScaleMarkerLabel || !isFinite(bmi)) return;
+
+  const minBmi = 12;
+  const maxBmi = 40;
+  const clamped = clamp(bmi, minBmi, maxBmi);
+
+  const ratio = (clamped - minBmi) / (maxBmi - minBmi);
+  const percent = ratio * 100;
+  const safePercent = clamp(percent, 3, 97);
+
+  bmiScaleMarker.style.left = safePercent + '%';
+  bmiScaleMarkerLabel.textContent = 'ІМТ: ' + fmt1.format(bmi);
+}
 
         if (categoryKey === 'under') {
           const needGain = wMin - currentW;
@@ -438,6 +497,12 @@
         bmiCategoryEl.textContent = '—';
         bmiRangeEl.textContent = '—';
         bmiDeltaEl.textContent = '—';
+		
+		if (bmiScaleMarker && bmiScaleMarkerLabel) {
+  bmiScaleMarker.style.left = '0%';
+  bmiScaleMarkerLabel.textContent = 'ІМТ: —';
+}
+		
       }
 
       if (document.readyState === 'loading') {
