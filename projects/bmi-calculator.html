@@ -386,10 +386,8 @@
   <!-- Логіка калькулятора ІМТ -->
   <script>
     (function() {
-      'use strict';	  
-	  
-	  const bmiScaleMarker = document.getElementById('bmiScaleMarker');
-      const bmiScaleMarkerLabel = document.getElementById('bmiScaleMarkerLabel');
+      'use strict';
+
       const heightEl = document.getElementById('height');
       const weightEl = document.getElementById('weight');
       const bmiResult = document.getElementById('bmiResult');
@@ -400,12 +398,15 @@
       const bmiRangeEl = document.getElementById('bmiRange');
       const bmiDeltaEl = document.getElementById('bmiDelta');
 
+      const bmiScaleMarker = document.getElementById('bmiScaleMarker');
+      const bmiScaleMarkerLabel = document.getElementById('bmiScaleMarkerLabel');
+
       const fmt1 = new Intl.NumberFormat('uk-UA', { maximumFractionDigits: 1 });
       const fmt1kg = new Intl.NumberFormat('uk-UA', { maximumFractionDigits: 1, minimumFractionDigits: 1 });
-	  
-	  function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value));
-}
+
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      }
 
       function init() {
         heightEl.addEventListener('input', recalc);
@@ -438,7 +439,8 @@
         bmiCategoryEl.textContent = category.label;
         bmiRangeEl.textContent = fmt1kg.format(wMin) + '–' + fmt1kg.format(wMax) + ' кг';
         bmiDeltaEl.textContent = deltaText;
-		updateScale(bmi);
+
+        updateScale(bmi);
 
         bmiResult.classList.add('pulse');
         setTimeout(() => bmiResult.classList.remove('pulse'), 400);
@@ -465,21 +467,6 @@
           const span = Math.min(toLow, toHigh);
           return 'Ви в межах норми. Запас до меж діапазону ≈ ' + fmt1kg.format(span) + ' кг.';
         }
-		
-		function updateScale(bmi) {
-  if (!bmiScaleMarker || !bmiScaleMarkerLabel || !isFinite(bmi)) return;
-
-  const minBmi = 12;
-  const maxBmi = 40;
-  const clamped = clamp(bmi, minBmi, maxBmi);
-
-  const ratio = (clamped - minBmi) / (maxBmi - minBmi);
-  const percent = ratio * 100;
-  const safePercent = clamp(percent, 3, 97);
-
-  bmiScaleMarker.style.left = safePercent + '%';
-  bmiScaleMarkerLabel.textContent = 'ІМТ: ' + fmt1.format(bmi);
-}
 
         if (categoryKey === 'under') {
           const needGain = wMin - currentW;
@@ -491,18 +478,33 @@
         return 'Щоб повернутися в діапазон норми, потрібно зменшити вагу приблизно на ' + fmt1kg.format(needLoss) + ' кг.';
       }
 
+      // 🔹 Окрема функція оновлення шкали (було вкладено всередину getDeltaText)
+      function updateScale(bmi) {
+        if (!bmiScaleMarker || !bmiScaleMarkerLabel || !isFinite(bmi)) return;
+
+        const minBmi = 12;
+        const maxBmi = 40;
+        const clamped = clamp(bmi, minBmi, maxBmi);
+
+        const ratio = (clamped - minBmi) / (maxBmi - minBmi); // 0..1
+        const percent = ratio * 100;
+        const safePercent = clamp(percent, 3, 97); // невеликі відступи від країв
+
+        bmiScaleMarker.style.left = safePercent + '%';
+        bmiScaleMarkerLabel.textContent = 'ІМТ: ' + fmt1.format(bmi);
+      }
+
       function resetUI() {
         bmiValueEl.textContent = '—';
         bmiMetaEl.textContent = 'Введіть коректні значення зросту та ваги, щоб побачити результат.';
         bmiCategoryEl.textContent = '—';
         bmiRangeEl.textContent = '—';
         bmiDeltaEl.textContent = '—';
-		
-		if (bmiScaleMarker && bmiScaleMarkerLabel) {
-  bmiScaleMarker.style.left = '0%';
-  bmiScaleMarkerLabel.textContent = 'ІМТ: —';
-}
-		
+
+        if (bmiScaleMarker && bmiScaleMarkerLabel) {
+          bmiScaleMarker.style.left = '0%';
+          bmiScaleMarkerLabel.textContent = 'ІМТ: —';
+        }
       }
 
       if (document.readyState === 'loading') {
