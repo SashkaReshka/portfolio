@@ -142,9 +142,9 @@ async function initProjectPage() {
   try {
     const project = await loadProject(slug);
     
-    // ✅ ПЕРЕВІРКА: якщо це калькулятор — редирект
+  // ✅ Якщо це калькулятор — робимо редирект БЕЗ залишення project.html в історії
     if (project.isCalculator && project.calculatorPath) {
-      window.location.href = project.calculatorPath;
+      window.location.replace(project.calculatorPath);
       return;
     }
     
