@@ -534,3 +534,37 @@
   border-color: rgba(59, 130, 246, 0.3);
   color: #93c5fd;
 }
+
+.calc-text {
+  background: var(--bg-elevated, #f7f8fa);
+  border-left: 4px solid var(--accent, #4e73df20);
+  padding: 16px 20px;
+  margin: 0 auto 32px auto;
+  border-radius: 12px;
+
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-secondary, #3a3a3a);
+
+  max-width: 900px;
+}
+
+.calc-text h3 {
+  margin-top: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary, #111);
+}
+
+.calc-text ul,
+.calc-text p {
+  margin-bottom: 12px;
+}
+
+.calc-text ul {
+  padding-left: 20px;
+}
+
+.calc-text li {
+  margin-bottom: 6px;
+}
