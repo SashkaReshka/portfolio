@@ -712,33 +712,19 @@
     white-space: nowrap;
   }
 
-  .bmi-scale-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.25rem;
-    font-size: 0.75rem;
-  }
+.bmi-scale-legend {
+  display: grid;
+  grid-template-columns: 1.85fr 2.64fr 1.5fr 2fr; /* ті ж пропорції, що й у .bmi-scale-bar */
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+}
 
-  .bmi-legend-item {
-    padding: 0.15rem 0.5rem;
-    border-radius: 999px;
-    border: 1px solid rgba(148,163,184,0.5);
-    background: rgba(248,250,252,0.8);
-  }
-
-  .bmi-legend-item--under {
-    border-color: #38bdf8;
-  }
-  .bmi-legend-item--normal {
-    border-color: #22c55e;
-  }
-  .bmi-legend-item--over {
-    border-color: #eab308;
-  }
-  .bmi-legend-item--obese {
-    border-color: #ef4444;
-  }
+.bmi-legend-item {
+  justify-self: center;        /* по центру свого сегмента */
+  padding: 0;                  /* без “пігулок” */
+  border: none;                /* без обведення */
+  background: transparent;     /* прозорий фон */
+}
 
   @media (max-width: 600px) {
     .bmi-segment-label {
