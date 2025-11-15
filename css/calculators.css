@@ -573,3 +573,36 @@
   background: rgba(79, 180, 255, 0.06);
   border-color: rgba(79, 180, 255, 0.6);
 }
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+
+  /* Верхній вступний блок */
+  .calc-text--intro {
+    background: rgba(255,255,255,0.04);          /* дуже легка світла вуаль */
+    border: 1px solid rgba(255,255,255,0.08);     /* тонка світла рамка */
+    color: rgba(255,255,255,0.85);
+  }
+
+  /* Нижній інформаційний блок з акцентом AICRAFT */
+  .calc-info-block {
+    background: rgba(79, 180, 255, 0.06);         /* світлий акцентований фон */
+    border: 1px solid rgba(79, 180, 255, 0.45);    /* трохи яскравіша рамка */
+    color: rgba(255,255,255,0.90);
+  }
+
+  .calc-info-block:hover {
+    background: rgba(79, 180, 255, 0.10);
+    border-color: rgba(79, 180, 255, 0.70);
+  }
+
+  .calc-info-block h3,
+  .calc-info-block h4 {
+    color: rgba(255,255,255,0.95);
+  }
+
+  .calc-text--intro h3,
+  .calc-text--intro h4 {
+    color: rgba(255,255,255,0.95);
+  }
+}
