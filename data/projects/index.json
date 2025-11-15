@@ -28,7 +28,7 @@
   ],
   "date": "2025-01-20",
   "thumbnail": "assets/images/bmi-calculator.webp",
-  "featured": false,
+  "featured": true,
   "isCalculator": true,
   "calculatorPath": "projects/bmi-calculator.html"
   }
