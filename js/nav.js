@@ -21,14 +21,13 @@ async function loadProjectsData() {
 
 // Генерація HTML навігації
 function generateNavHTML(projects) {
-  
   return `
     <div class="aside-inner">
       <!-- Мобільний хедер: логотип зліва + кнопка справа -->
       <div class="mobile-header">
-        <a href="index.html" class="logo-link-mobile">
+        <a href="/portfolio/index.html" class="logo-link-mobile">
           <img 
-            src="assets/images/logo.png" 
+            src="/portfolio/assets/images/logo.png" 
             alt="Логотип" 
             class="logo-image-mobile"
             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
@@ -37,14 +36,14 @@ function generateNavHTML(projects) {
             <div class="logo-initial">О</div>
           </div>
         </a>
-        <a class="btn btn-accent btn-mobile-contact" href="index.html#contact">Зв'язатися</a>
+        <a class="btn btn-accent btn-mobile-contact" href="/portfolio/index.html#contact">Зв'язатися</a>
       </div>
       
       <!-- Логотип і tagline (десктоп) -->
       <div class="brand">
-        <a href="index.html" class="logo-link">
+        <a href="/portfolio/index.html" class="logo-link">
           <img 
-            src="assets/images/logo.png" 
+            src="/portfolio/assets/images/logo.png" 
             alt="Логотип" 
             class="logo-image"
             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
@@ -60,9 +59,9 @@ function generateNavHTML(projects) {
       <nav>
         <div class="nav-title">Навігація</div>
         <a class="nav-link" href="/portfolio/index.html">🏠 <span>Головна</span></a>
-<a class="nav-link" href="/portfolio/projects.html">💡 <span>Інтерактивні крафти</span></a>
-<a class="nav-link" href="/portfolio/gpts.html">🤖 <span>GPTs крафти</span></a>
-<a class="nav-link" href="/portfolio/blog.html">📝 <span>Блог</span></a>
+        <a class="nav-link" href="/portfolio/projects.html">💡 <span>Інтерактивні крафти</span></a>
+        <a class="nav-link" href="/portfolio/gpts.html">🤖 <span>GPTs крафти</span></a>
+        <a class="nav-link" href="/portfolio/blog.html">📝 <span>Блог</span></a>
         
         <!-- Переключатель теми в меню (тільки мобільні) -->
         <div class="theme-toggle-mobile">
