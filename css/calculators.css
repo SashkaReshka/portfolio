@@ -295,6 +295,7 @@
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
   margin-top: 24px;
+  align-items: stretch; /* всі плитки однакової висоти в рядку */
 }
 
 .calc-tile {
@@ -304,6 +305,11 @@
   border-radius: 12px;
   text-align: center;
   transition: all 0.2s ease;
+
+  display: flex;              /* робимо контейнером */
+  flex-direction: column;
+  justify-content: center;    /* вертикальний центр контенту */
+  align-items: center;        /* горизонтальний центр */
 }
 
 .calc-tile:hover {
