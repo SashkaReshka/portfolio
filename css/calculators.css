@@ -784,6 +784,18 @@
   background: transparent;     /* прозорий фон */
 }
 
+/* Прибрати нативні стрілки в Chrome/Edge */
+.calc-input::-webkit-inner-spin-button,
+.calc-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.calc-input[type=number] {
+  -moz-appearance: textfield;
+}
+
   @media (max-width: 600px) {
     .bmi-segment-label {
       font-size: 0.65rem;
