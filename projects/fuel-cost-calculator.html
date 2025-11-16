@@ -367,11 +367,6 @@
 
         <!-- Тіло калькулятора -->
         <div class="calc-body">
-          <!-- Таби режимів -->
-          <div class="calc-tabs" aria-label="Режим розрахунку">
-            <button type="button" class="calc-tab calc-tab--active" data-tab="trip">Поїздка</button>
-            <button type="button" class="calc-tab" data-tab="month">Місяць</button>
-          </div>
 
           <!-- Вхідні дані (спільні для обох режимів) -->
           <div class="calc-grid-2">
@@ -578,229 +573,163 @@
   <script src="../js/utils.js"></script>
 
   <!-- Логіка калькулятора витрат пального -->
-  <script>
-    (function() {
-      'use strict';
+<script>
+  (function() {
+    'use strict';
 
-      const distanceEl = document.getElementById('distance');
-      const consumptionEl = document.getElementById('consumption');
-      const fuelPriceEl = document.getElementById('fuelPrice');
-      const tripsPerMonthEl = document.getElementById('tripsPerMonth');
-      const tripsPerMonthGroup = document.getElementById('tripsPerMonthGroup');
-      const cityShareEl = document.getElementById('cityShare');
-      const cityShareLabelEl = document.getElementById('cityShareLabel');
-      const acOnEl = document.getElementById('acOn');
-      const distanceLabelEl = document.getElementById('distanceLabel');
+    const distanceEl = document.getElementById('distance');
+    const consumptionEl = document.getElementById('consumption');
+    const fuelPriceEl = document.getElementById('fuelPrice');
+    const tripsPerMonthEl = document.getElementById('tripsPerMonth');
+    const tripsPerMonthGroup = document.getElementById('tripsPerMonthGroup');
+    const cityShareEl = document.getElementById('cityShare');
+    const cityShareLabelEl = document.getElementById('cityShareLabel');
+    const acOnEl = document.getElementById('acOn');
+    const distanceLabelEl = document.getElementById('distanceLabel');
 
-      const mainResultEl = document.getElementById('mainResult');
-      const mainResultLabelEl = document.getElementById('mainResultLabel');
-      const mainResultValueEl = document.getElementById('mainResultValue');
-      const mainResultMetaEl = document.getElementById('mainResultMeta');
+    const mainResultEl = document.getElementById('mainResult');
+    const mainResultLabelEl = document.getElementById('mainResultLabel');
+    const mainResultValueEl = document.getElementById('mainResultValue');
+    const mainResultMetaEl = document.getElementById('mainResultMeta');
 
-      const tile1LabelEl = document.getElementById('tile1Label');
-      const tile1ValueEl = document.getElementById('tile1Value');
-      const tile1HintEl = document.getElementById('tile1Hint');
+    const tile1LabelEl = document.getElementById('tile1Label');
+    const tile1ValueEl = document.getElementById('tile1Value');
+    const tile1HintEl = document.getElementById('tile1Hint');
 
-      const tile2LabelEl = document.getElementById('tile2Label');
-      const tile2ValueEl = document.getElementById('tile2Value');
-      const tile2HintEl = document.getElementById('tile2Hint');
+    const tile2LabelEl = document.getElementById('tile2Label');
+    const tile2ValueEl = document.getElementById('tile2Value');
+    const tile2HintEl = document.getElementById('tile2Hint');
 
-      const tile3LabelEl = document.getElementById('tile3Label');
-      const tile3ValueEl = document.getElementById('tile3Value');
-      const tile3HintEl = document.getElementById('tile3Hint');
+    const tile3LabelEl = document.getElementById('tile3Label');
+    const tile3ValueEl = document.getElementById('tile3Value');
+    const tile3HintEl = document.getElementById('tile3Hint');
 
-      const tabs = Array.from(document.querySelectorAll('.calc-tab'));
-      let activeTab = 'trip';
+    const fmt1fixed = new Intl.NumberFormat('uk-UA', {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1
+    });
+    const fmt2 = new Intl.NumberFormat('uk-UA', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    const fmt0 = new Intl.NumberFormat('uk-UA', {
+      maximumFractionDigits: 0
+    });
 
-      const fmt1 = new Intl.NumberFormat('uk-UA', {
-        maximumFractionDigits: 1
-      });
-      const fmt1fixed = new Intl.NumberFormat('uk-UA', {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1
-      });
-      const fmt2 = new Intl.NumberFormat('uk-UA', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-      const fmt0 = new Intl.NumberFormat('uk-UA', {
-        maximumFractionDigits: 0
-      });
+    function init() {
+      // фіксуємо, що працюємо тільки в режимі "Поїздка"
+      distanceLabelEl.textContent = 'Дистанція поїздки, км';
+      tripsPerMonthGroup.classList.remove('hidden');
 
-      function init() {
-        distanceEl.addEventListener('input', recalc);
-        consumptionEl.addEventListener('input', recalc);
-        fuelPriceEl.addEventListener('input', recalc);
-        tripsPerMonthEl.addEventListener('input', recalc);
-        cityShareEl.addEventListener('input', onCityShareChange);
-        acOnEl.addEventListener('change', recalc);
+      mainResultLabelEl.textContent = 'Вартість поїздки';
+      tile1LabelEl.textContent = 'Пальне на поїздку';
+      tile1HintEl.textContent = 'Орієнтовна кількість літрів пального на разову поїздку.';
+      tile2LabelEl.textContent = 'Витрати на місяць';
+      tile2HintEl.textContent = 'За вказаної кількості поїздок на місяць.';
+      tile3LabelEl.textContent = 'Витрати на рік';
+      tile3HintEl.textContent = 'Орієнтовні витрати на пальне за 12 місяців цього сценарію.';
 
-        tabs.forEach(tab => {
-          tab.addEventListener('click', () => {
-            const tabId = tab.getAttribute('data-tab');
-            if (!tabId || tabId === activeTab) return;
-            setActiveTab(tabId);
-          });
-        });
+      distanceEl.addEventListener('input', recalc);
+      consumptionEl.addEventListener('input', recalc);
+      fuelPriceEl.addEventListener('input', recalc);
+      tripsPerMonthEl.addEventListener('input', recalc);
+      cityShareEl.addEventListener('input', onCityShareChange);
+      acOnEl.addEventListener('change', recalc);
 
-        onCityShareChange();
-        setActiveTab('trip');
-        recalc();
+      onCityShareChange();
+      recalc();
+    }
+
+    function onCityShareChange() {
+      const city = clamp(parseInt(cityShareEl.value, 10) || 0, 0, 100);
+      const highway = 100 - city;
+      cityShareLabelEl.textContent = 'Місто ' + city + '% / Траса ' + highway + '%';
+      recalc();
+    }
+
+    function recalc() {
+      const distanceKm = Math.max(0, parseFloat(distanceEl.value) || 0);
+      const consumption = Math.max(0, parseFloat(consumptionEl.value) || 0);
+      const fuelPrice = Math.max(0, parseFloat(fuelPriceEl.value) || 0);
+      const tripsPerMonth = Math.max(0, parseInt(tripsPerMonthEl.value, 10) || 0);
+      const cityShare = clamp(parseInt(cityShareEl.value, 10) || 0, 0, 100) / 100;
+      const acOn = acOnEl.checked === true;
+
+      if (!distanceKm || !consumption || !fuelPrice) {
+        resetUI();
+        return;
       }
 
-      function setActiveTab(tabId) {
-        activeTab = tabId;
+      const effectiveConsumption = calcEffectiveConsumption(consumption, cityShare, acOn);
+      const fuelPerTrip = distanceKm * (effectiveConsumption / 100);
+      const costPerTrip = fuelPerTrip * fuelPrice;
 
-        tabs.forEach(t => {
-          if (t.getAttribute('data-tab') === tabId) {
-            t.classList.add('calc-tab--active');
-          } else {
-            t.classList.remove('calc-tab--active');
-          }
-        });
+      const totalTripsPerMonth = tripsPerMonth > 0 ? tripsPerMonth : 0;
+      const fuelPerMonth = fuelPerTrip * totalTripsPerMonth;
+      const costPerMonth = costPerTrip * totalTripsPerMonth;
+      const costPerYear = costPerMonth * 12;
 
-        if (activeTab === 'trip') {
-          distanceLabelEl.textContent = 'Дистанція поїздки, км';
-          tripsPerMonthGroup.classList.remove('hidden');
+      // головний результат — поїздка
+      mainResultValueEl.textContent = isFinite(costPerTrip)
+        ? fmt2.format(costPerTrip) + ' грн'
+        : '—';
 
-          mainResultLabelEl.textContent = 'Вартість поїздки';
-          tile1LabelEl.textContent = 'Пальне на поїздку';
-          tile1HintEl.textContent = 'Орієнтовна кількість літрів пального на разову поїздку.';
+      mainResultMetaEl.textContent =
+        'Пальне: ' + fmt1fixed.format(fuelPerTrip) + ' л • ' +
+        'Середня витрата: ' + fmt1fixed.format(effectiveConsumption) + ' л/100 км • ' +
+        'Дистанція: ' + fmt0.format(distanceKm) + ' км';
 
-          tile2LabelEl.textContent = 'Витрати на місяць';
-          tile2HintEl.textContent = 'За вказаної кількості поїздок на місяць.';
+      // плитки
+      tile1ValueEl.textContent = isFinite(fuelPerTrip)
+        ? fmt1fixed.format(fuelPerTrip) + ' л'
+        : '—';
 
-          tile3LabelEl.textContent = 'Витрати на рік';
-          tile3HintEl.textContent = 'Орієнтовні витрати на пальне за 12 місяців цього сценарію.';
-        } else {
-          distanceLabelEl.textContent = 'Дистанція однієї поїздки, км';
-          tripsPerMonthGroup.classList.remove('hidden');
+      tile2ValueEl.textContent = totalTripsPerMonth && isFinite(costPerMonth)
+        ? fmt2.format(costPerMonth) + ' грн/міс'
+        : '—';
 
-          mainResultLabelEl.textContent = 'Витрати на пальне / місяць';
-          tile1LabelEl.textContent = 'Вартість поїздки';
-          tile1HintEl.textContent = 'При тих самих параметрах маршруту.';
+      tile3ValueEl.textContent = totalTripsPerMonth && isFinite(costPerYear)
+        ? fmt2.format(costPerYear) + ' грн/рік'
+        : '—';
 
-          tile2LabelEl.textContent = 'Пальне на місяць';
-          tile2HintEl.textContent = 'Загальний об’єм пального за всі поїздки на місяць.';
+      mainResultEl.classList.add('pulse');
+      setTimeout(() => mainResultEl.classList.remove('pulse'), 400);
+    }
 
-          tile3LabelEl.textContent = 'Витрати на рік';
-          tile3HintEl.textContent = 'Орієнтовні витрати за 12 місяців цього режиму.';
-        }
+    function calcEffectiveConsumption(base, cityShare, acOn) {
+      const highwayShare = 1 - cityShare;
+      const cityFactor = 1.10;
+      const highwayFactor = 0.95;
 
-        recalc();
+      let effective = base * (cityShare * cityFactor + highwayShare * highwayFactor);
+
+      if (acOn) {
+        effective *= 1.07;
       }
 
-      function onCityShareChange() {
-        const city = clamp(parseInt(cityShareEl.value, 10) || 0, 0, 100);
-        const highway = 100 - city;
-        cityShareLabelEl.textContent = 'Місто ' + city + '% / Траса ' + highway + '%';
-        recalc();
-      }
+      return effective;
+    }
 
-      function recalc() {
-        const distanceKm = Math.max(0, parseFloat(distanceEl.value) || 0);
-        const consumption = Math.max(0, parseFloat(consumptionEl.value) || 0);
-        const fuelPrice = Math.max(0, parseFloat(fuelPriceEl.value) || 0);
-        const tripsPerMonth = Math.max(0, parseInt(tripsPerMonthEl.value, 10) || 0);
-        const cityShare = clamp(parseInt(cityShareEl.value, 10) || 0, 0, 100) / 100;
-        const acOn = acOnEl.checked === true;
+    function resetUI() {
+      mainResultValueEl.textContent = '—';
+      mainResultMetaEl.textContent =
+        'Введіть коректні значення дистанції, витрати та ціни пального, щоб побачити результат.';
 
-        if (!distanceKm || !consumption || !fuelPrice) {
-          resetUI();
-          return;
-        }
+      tile1ValueEl.textContent = '—';
+      tile2ValueEl.textContent = '—';
+      tile3ValueEl.textContent = '—';
+    }
 
-        const effectiveConsumption = calcEffectiveConsumption(consumption, cityShare, acOn);
-        const fuelPerTrip = distanceKm * (effectiveConsumption / 100);
-        const costPerTrip = fuelPerTrip * fuelPrice;
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
 
-        const totalTripsPerMonth = tripsPerMonth > 0 ? tripsPerMonth : 0;
-        const fuelPerMonth = fuelPerTrip * totalTripsPerMonth;
-        const costPerMonth = costPerTrip * totalTripsPerMonth;
-        const fuelPerYear = fuelPerMonth * 12;
-        const costPerYear = costPerMonth * 12;
-
-        let mainValueText = '—';
-        let mainMetaText = '';
-
-        if (activeTab === 'trip') {
-          mainValueText = isFinite(costPerTrip) ? fmt2.format(costPerTrip) + ' грн' : '—';
-          mainMetaText = 
-            'Пальне: ' + fmt1fixed.format(fuelPerTrip) + ' л • ' +
-            'Середня витрата: ' + fmt1fixed.format(effectiveConsumption) + ' л/100 км • ' +
-            'Дистанція: ' + fmt0.format(distanceKm) + ' км';
-        } else {
-          if (totalTripsPerMonth > 0) {
-            mainValueText = isFinite(costPerMonth) ? fmt2.format(costPerMonth) + ' грн/міс' : '—';
-            mainMetaText = 
-              'Поїздок на місяць: ' + fmt0.format(totalTripsPerMonth) + 
-              ' • Дистанція: ' + fmt0.format(distanceKm * totalTripsPerMonth) + ' км/міс • ' +
-              'Пальне: ' + fmt1fixed.format(fuelPerMonth) + ' л/міс';
-          } else {
-            mainValueText = '—';
-            mainMetaText = 'Вкажіть кількість поїздок на місяць, щоб побачити витрати на місяць і рік.';
-          }
-        }
-
-        mainResultValueEl.textContent = mainValueText;
-        mainResultMetaEl.textContent = mainMetaText;
-
-        if (activeTab === 'trip') {
-          tile1ValueEl.textContent = isFinite(fuelPerTrip) ? fmt1fixed.format(fuelPerTrip) + ' л' : '—';
-          tile2ValueEl.textContent = totalTripsPerMonth && isFinite(costPerMonth)
-            ? fmt2.format(costPerMonth) + ' грн/міс'
-            : '—';
-          tile3ValueEl.textContent = totalTripsPerMonth && isFinite(costPerYear)
-            ? fmt2.format(costPerYear) + ' грн/рік'
-            : '—';
-        } else {
-          tile1ValueEl.textContent = isFinite(costPerTrip) ? fmt2.format(costPerTrip) + ' грн' : '—';
-          tile2ValueEl.textContent = totalTripsPerMonth && isFinite(fuelPerMonth)
-            ? fmt1fixed.format(fuelPerMonth) + ' л/міс'
-            : '—';
-          tile3ValueEl.textContent = totalTripsPerMonth && isFinite(costPerYear)
-            ? fmt2.format(costPerYear) + ' грн/рік'
-            : '—';
-        }
-
-        mainResultEl.classList.add('pulse');
-        setTimeout(() => mainResultEl.classList.remove('pulse'), 400);
-      }
-
-      function calcEffectiveConsumption(base, cityShare, acOn) {
-        const highwayShare = 1 - cityShare;
-
-        const cityFactor = 1.10;
-        const highwayFactor = 0.95;
-
-        let effective = base * (cityShare * cityFactor + highwayShare * highwayFactor);
-
-        if (acOn) {
-          effective *= 1.07;
-        }
-
-        return effective;
-      }
-
-      function resetUI() {
-        mainResultValueEl.textContent = '—';
-        mainResultMetaEl.textContent = 'Введіть коректні значення дистанції, витрати та ціни пального, щоб побачити результат.';
-
-        tile1ValueEl.textContent = '—';
-        tile2ValueEl.textContent = '—';
-        tile3ValueEl.textContent = '—';
-      }
-
-      function clamp(value, min, max) {
-        return Math.min(max, Math.max(min, value));
-      }
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-      } else {
-        init();
-      }
-    })();
-  </script>
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
 </body>
 </html>
