@@ -784,17 +784,87 @@
   background: transparent;     /* прозорий фон */
 }
 
-/* Прибрати нативні стрілки в Chrome/Edge */
+/* ========================================
+   NUMBER INPUTS: прибирання нативних стрілок
+   ======================================== */
+
 .calc-input::-webkit-inner-spin-button,
 .calc-input::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-/* Firefox */
 .calc-input[type=number] {
   -moz-appearance: textfield;
 }
+
+/* ========================================
+   ДОДАТКОВІ ЕЛЕМЕНТИ FUEL-CALCULATOR
+   ======================================== */
+
+/* Рядок для повзунка "Місто/Траса" */
+.calc-range-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.calc-range-row input[type="range"] {
+  flex: 1;
+}
+
+/* Підпис до повзунка */
+.calc-range-value {
+  min-width: 90px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Тогл "Кондиціонер увімкнено" */
+.calc-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--fg);
+  cursor: pointer;
+  user-select: none;
+}
+
+.calc-toggle input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 2px solid var(--line);
+  appearance: none;
+  display: inline-block;
+  position: relative;
+  background: var(--bg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calc-toggle input[type="checkbox"]:checked {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.calc-toggle input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 4px;
+  background: #fff;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.calc-toggle input[type="checkbox"]:checked::after {
+  opacity: 1;
+}
+
 
   @media (max-width: 600px) {
     .bmi-segment-label {
