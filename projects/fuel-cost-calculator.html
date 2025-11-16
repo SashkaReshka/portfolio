@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Калькулятор витрат пального — Ціна поїздки онлайн | AICRAFT</title>
+  <meta name="description" content="Онлайн-калькулятор витрат пального: розрахунок вартості поїздки та витрат на місяць. Введіть дистанцію, витрату в л/100 км і ціну пального — сервіс миттєво покаже, скільки літрів та грошей піде на дорогу.">
+  <meta name="color-scheme" content="light dark" />
+
+  <!-- Шрифти (як у конвертері валют) -->
+  <link rel="preload" href="../assets/fonts/inter/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/inter/InterVariable-Italic.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- Модульні стилі сайту -->
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/fonts.css" />
+  <link rel="stylesheet" href="../css/navigation.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/sections.css" />
+  <link rel="stylesheet" href="../css/calculators.css" />
+  <link rel="stylesheet" href="../css/mobile.css" />
+
+  <!-- Локальні стилі для табів і CTA -->
+  <style>
+    .calc-tabs {
+      display: inline-flex;
+      align-items: stretch;
+      gap: 6px;
+      margin: 8px 0 20px;
+      padding: 4px;
+      border-radius: 999px;
+      background: var(--bg-soft, rgba(148,163,184,0.12));
+    }
+
+    .calc-tab {
+      border: none;
+      background: transparent;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+      transition: background 0.2s ease, color 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .calc-tab--active {
+      background: var(--card);
+      color: var(--fg);
+      box-shadow: 0 0 0 1px rgba(148,163,184,0.35);
+    }
+
+    .calc-tab-panel {
+      display: none;
+    }
+
+    .calc-tab-panel--active {
+      display: block;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .calc-range-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .calc-range-row input[type="range"] {
+      flex: 1;
+    }
+
+    .calc-range-value {
+      min-width: 52px;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .calc-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--fg);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .calc-toggle input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      border: 2px solid var(--line);
+      appearance: none;
+      display: inline-block;
+      position: relative;
+      background: var(--bg);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .calc-toggle input[type="checkbox"]:checked {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .calc-toggle input[type="checkbox"]::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border-radius: 4px;
+      background: #fff;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .calc-toggle input[type="checkbox"]:checked::after {
+      opacity: 1;
+    }
+
+    .calc-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .calc-cta span {
+      font-size: 16px;
+    }
+
+    .calc-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(15,23,42,0.18);
+      background: #f97316;
+    }
+
+    .calc-cta:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .dark .calc-tabs {
+      background: rgba(15,23,42,0.85);
+    }
+
+    .dark .calc-tab--active {
+      background: rgba(15,23,42,0.95);
+      box-shadow: 0 0 0 1px rgba(148,163,184,0.6);
+    }
+  </style>
+
+  <!-- WebApplication Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Калькулятор витрат пального",
+    "alternateName": "Розрахунок вартості поїздки",
+    "description": "Простий онлайн-калькулятор витрат пального для водіїв в Україні: введіть дистанцію поїздки, витрату в л/100 км та ціну пального, щоб миттєво дізнатись, скільки літрів і гривень піде на дорогу.",
+    "url": "https://aicraft.com.ua/projects/fuel-cost-calculator.html",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Будь-яка платформа з браузером",
+    "browserRequirements": "Requires JavaScript. Requires HTML5.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "UAH"
+    },
+    "provider": {
+      "@type": "Organization",
+      "name": "AICRAFT",
+      "url": "https://aicraft.com.ua"
+    },
+    "featureList": [
+      "Розрахунок вартості поїздки за витратою в л/100 км",
+      "Оцінка місячних та річних витрат на пальне",
+      "Урахування частки міста та траси",
+      "Поправка на роботу кондиціонера",
+      "Миттєвий перерахунок без перезавантаження сторінки"
+    ],
+    "screenshot": "https://aicraft.com.ua/assets/images/fuel-cost-calculator-preview.jpg",
+    "softwareVersion": "1.0",
+    "datePublished": "2025-01-25",
+    "dateModified": "2025-01-25",
+    "inLanguage": "uk-UA",
+    "isAccessibleForFree": true
+  }
+  </script>
+
+  <!-- FAQ Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Що потрібно ввести для розрахунку витрат пального?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Для розрахунку достатньо вказати дистанцію поїздки в кілометрах, середню витрату автомобіля в л/100 км та актуальну ціну пального за літр. За бажанням можна налаштувати частку міста/траси та увімкнути поправку на роботу кондиціонера."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Чи враховує калькулятор різницю між міським і трасовим циклом?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Так. Ви можете задати частку міського та трасового руху у відсотках. Калькулятор використовує цю пропорцію, щоб орієнтовно скоригувати фактичну витрату пального: місто зазвичай споживає більше, траса — менше."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Що таке витрата в л/100 км?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Витрата пального в л/100 км — це скільки літрів пального автомобіль спалює на 100 кілометрів пробігу. Наприклад, 7.5 л/100 км означає, що на 100 км дорога машина витрачає в середньому 7.5 л пального."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Чи зберігає калькулятор мої дані?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ні, усі розрахунки виконуються локально у вашому браузері. Значення не передаються на сервер і не зберігаються, окрім можливого кешу самого браузера."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Як використовувати результат для планування бюджету?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Після розрахунку ви побачите вартість однієї поїздки, орієнтовні витрати на місяць та рік. Можна змінювати дистанцію та частоту поїздок, щоб змоделювати різні сценарії та зрозуміти, як впливає стиль їзди на бюджет."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Чи є цей калькулятор фінансовою або технічною консультацією?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ні. Це орієнтовний інструмент для побутових розрахунків. Реальна витрата залежить від стану автомобіля, трафіку, стилю керування, температури, завантаженості та інших факторів."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Breadcrumb Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Головна",
+        "item": "https://aicraft.com.ua/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Інтерактивні крафти",
+        "item": "https://aicraft.com.ua/projects.html"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Калькулятор витрат пального",
+        "item": "https://aicraft.com.ua/projects/fuel-cost-calculator.html"
+      }
+    ]
+  }
+  </script>
+
+  <!-- HowTo Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Як користуватись калькулятором витрат пального",
+    "description": "Покрокова інструкція для розрахунку вартості поїздки та щомісячних витрат на пальне.",
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Оберіть режим розрахунку",
+        "text": "На вкладках оберіть, що саме хочете розрахувати — разову поїздку чи орієнтовні витрати на місяць."
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Введіть дистанцію",
+        "text": "У полі дистанції вкажіть кілометраж однієї поїздки. Для місячного розрахунку додатково вкажіть кількість таких поїздок на місяць."
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Вкажіть витрату та ціну пального",
+        "text": "У полі витрати введіть середню витрату автомобіля в л/100 км, а в полі ціни — актуальну вартість літра пального."
+      },
+      {
+        "@type": "HowToStep",
+        "position": 4,
+        "name": "Налаштуйте міський/трасовий цикл та кондиціонер",
+        "text": "За потреби налаштуйте частку міста й траси, а також увімкніть поправку на роботу кондиціонера для більш реалістичного розрахунку."
+      },
+      {
+        "@type": "HowToStep",
+        "position": 5,
+        "name": "Проаналізуйте результат",
+        "text": "Калькулятор миттєво покаже витрату пального в літрах та вартість поїздки, а також орієнтовні витрати на місяць та рік."
+      }
+    ],
+    "totalTime": "PT1M"
+  }
+  </script>
+</head>
+<body>
+  <div class="layout">
+    <!-- Навігація -->
+    <aside id="navigation"></aside>
+
+    <!-- Головний контент -->
+    <main>
+      <!-- 🧭 Крихти -->
+      <nav class="breadcrumbs" style="max-width:1100px; margin:0 auto;">
+        <div class="breadcrumb-item">
+          <a href="../index.html" class="breadcrumb-link breadcrumb-home">🏠</a>
+        </div>
+        <span class="breadcrumb-separator">›</span>
+        <div class="breadcrumb-item">
+          <a href="../projects.html" class="breadcrumb-link">💡 Інтерактивні крафти</a>
+        </div>
+        <span class="breadcrumb-separator">›</span>
+        <div class="breadcrumb-item">
+          <span class="breadcrumb-current">⛽ Калькулятор витрат пального</span>
+        </div>
+      </nav>
+
+      <div class="container">
+        <!-- Хедер сторінки -->
+        <div class="section">
+          <h1>⛽ Калькулятор витрат пального</h1>
+          <div class="calc-text--intro">
+            Цей калькулятор допомагає швидко оцінити, скільки пального й грошей піде на поїздку або регулярні маршрути протягом місяця. 
+            Введіть дистанцію, витрату в л/100 км та ціну пального — інструмент миттєво покаже вартість поїздки, літри на дорогу, 
+            а також орієнтовні витрати на місяць і рік з урахуванням частки міських/трасових ділянок та роботи кондиціонера.
+          </div>
+        </div>
+
+        <!-- Тіло калькулятора -->
+        <div class="calc-body">
+          <!-- Таби режимів -->
+          <div class="calc-tabs" aria-label="Режим розрахунку">
+            <button type="button" class="calc-tab calc-tab--active" data-tab="trip">Поїздка</button>
+            <button type="button" class="calc-tab" data-tab="month">Місяць</button>
+          </div>
+
+          <!-- Вхідні дані (спільні для обох режимів) -->
+          <div class="calc-grid-2">
+            <div class="calc-form-group">
+              <label class="calc-label" id="distanceLabel">Дистанція поїздки, км</label>
+              <input 
+                type="number" 
+                id="distance" 
+                class="calc-input" 
+                min="1" 
+                max="2000" 
+                step="1" 
+                value="50" 
+                placeholder="Наприклад, 50 км" />
+            </div>
+
+            <div class="calc-form-group">
+              <label class="calc-label">Витрата авто, л/100 км</label>
+              <div class="calc-input-icon">
+                <input 
+                  type="number" 
+                  id="consumption" 
+                  class="calc-input" 
+                  min="2" 
+                  max="30" 
+                  step="0.1" 
+                  value="7.5" 
+                  placeholder="Наприклад, 7.5 л/100 км" />
+                <div class="calc-input-icon-element">л/100 км</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="calc-grid-2">
+            <div class="calc-form-group">
+              <label class="calc-label">Ціна пального, грн/л</label>
+              <div class="calc-input-icon">
+                <input 
+                  type="number" 
+                  id="fuelPrice" 
+                  class="calc-input" 
+                  min="1" 
+                  max="200" 
+                  step="0.1" 
+                  value="60" 
+                  placeholder="Наприклад, 60 грн/л" />
+                <div class="calc-input-icon-element">грн/л</div>
+              </div>
+            </div>
+
+            <div class="calc-form-group" id="tripsPerMonthGroup">
+              <label class="calc-label">Кількість поїздок на місяць</label>
+              <input 
+                type="number" 
+                id="tripsPerMonth" 
+                class="calc-input" 
+                min="1" 
+                max="60" 
+                step="1" 
+                value="20" 
+                placeholder="Наприклад, 20 поїздок/міс" />
+            </div>
+          </div>
+
+          <div class="calc-grid-2">
+            <div class="calc-form-group">
+              <label class="calc-label">Частка міста / траси, %</label>
+              <div class="calc-range-row">
+                <input 
+                  type="range" 
+                  id="cityShare" 
+                  min="0" 
+                  max="100" 
+                  step="5" 
+                  value="40" />
+                <div class="calc-range-value" id="cityShareLabel">
+                  Місто 40% / Траса 60%
+                </div>
+              </div>
+            </div>
+
+            <div class="calc-form-group">
+              <label class="calc-label">Додаткові фактори</label>
+              <label class="calc-toggle">
+                <input type="checkbox" id="acOn" />
+                <span>Кондиціонер увімкнено (AC)</span>
+              </label>
+              <p style="margin:8px 0 0; font-size:12px; color:var(--muted);">
+                Увімкнений кондиціонер може збільшити витрату пального на 5–10%, особливо в місті.
+              </p>
+            </div>
+          </div>
+
+          <!-- Результати -->
+          <div class="calc-result" id="mainResult">
+            <div class="calc-result-label" id="mainResultLabel">Вартість поїздки</div>
+            <div class="calc-result-value" id="mainResultValue">—</div>
+            <div class="calc-result-meta" id="mainResultMeta">
+              Введіть дистанцію, витрату та ціну пального, щоб побачити вартість поїздки.
+            </div>
+          </div>
+
+          <!-- Плитки KPI -->
+          <div class="calc-tiles">
+            <div class="calc-tile">
+              <div class="calc-tile-label" id="tile1Label">Пальне на поїздку</div>
+              <div class="calc-tile-value" id="tile1Value">—</div>
+              <div class="calc-tile-small" id="tile1Hint">Орієнтовна кількість літрів пального.</div>
+            </div>
+            <div class="calc-tile">
+              <div class="calc-tile-label" id="tile2Label">Витрати на місяць</div>
+              <div class="calc-tile-value" id="tile2Value">—</div>
+              <div class="calc-tile-small" id="tile2Hint">За вказаної кількості поїздок на місяць.</div>
+            </div>
+            <div class="calc-tile">
+              <div class="calc-tile-label" id="tile3Label">Витрати на рік</div>
+              <div class="calc-tile-value" id="tile3Value">—</div>
+              <div class="calc-tile-small" id="tile3Hint">Орієнтовні витрати з урахуванням поточного сценарію.</div>
+            </div>
+          </div>
+
+          <!-- Інфо-блоки -->
+          <div class="calc-info">
+            <strong>Важливо:</strong> Калькулятор працює в метричній системі, прийнятій в Україні (км, л/100 км, грн/л). 
+            Результат є орієнтовним — реальна витрата може відрізнятися через стиль керування, завантаженість, температуру та стан авто.
+          </div>
+
+          <div class="calc-info-block">
+            <strong>Що показує цей калькулятор</strong> — базову економіку вашого маршруту: скільки літрів пального й гривень 
+            потрібно на одну поїздку, а також у скільки обійдуться регулярні поїздки протягом місяця та року. 
+            Ви можете швидко змінювати дистанцію, частку міста/траси, ціну пального та «гратися» зі сценаріями, щоб зрозуміти, 
+            де саме ховається економія.
+            
+            <h2>Як розраховується витрата</h2>
+            <p>
+              Основна формула проста: <strong>Пальне = Дистанція × (Витрата / 100)</strong>, 
+              де витрата — це середній показник у л/100 км. 
+              Далі вартість рахується як <strong>Вартість = Пальне × Ціна за літр</strong>.
+            </p>
+
+            <p>
+              Додатково калькулятор враховує частку міста та траси: у місті машина зазвичай споживає більше, 
+              на трасі — менше. Увімкнений кондиціонер додає ще кілька відсотків до витрати, особливо в заторах.
+            </p>
+
+            <h2>Коли корисно рахувати витрати пального</h2>
+            <ul>
+              <li>щоденні поїздки на роботу й назад;</li>
+              <li>регулярні поїздки за місто чи на дачу;</li>
+              <li>дальні подорожі та відпустки;</li>
+              <li>порівняння «скільки коштує їздити на машині» vs громадський транспорт чи каршеринг;</li>
+              <li>оцінка, чи є сенс змінювати маршрут або стиль їзди заради економії.</li>
+            </ul>
+
+            <h3>Як використовувати результат на практиці</h3>
+            <p>
+              Подивіться, скільки ви витрачаєте на пальне за місяць та рік. 
+              Далі можна подумати, що змінити: стиль керування, графік поїздок, частку траси, 
+              використання кондиціонера чи навіть тип пального. 
+              Невелике зниження витрати на 0.5–1.0 л/100 км у довгій перспективі дає відчутну економію.
+            </p>
+          </div>
+
+          <div class="calc-info-block">
+            <h2>Поради для економії пального</h2>
+            <ul>
+              <li><strong>Уникайте різких стартів і гальмувань</strong> — плавне прискорення помітно знижує витрату.</li>
+              <li><strong>Слідкуйте за тиском у шинах</strong> — занижений тиск збільшує опір коченню та витрату.</li>
+              <li><strong>Приберіть зайвий вантаж з багажника</strong> — кожні +50–100 кг додають до витрати.</li>
+              <li><strong>Не тримайте обороти занадто високими</strong> — оптимальний діапазон економічніший за «червону зону».</li>
+              <li><strong>Використовуйте кондиціонер з розумом</strong> — на трасі вплив менший, у місті в заторах — більший.</li>
+            </ul>
+
+            <p>
+              Для детальніших порад з енергоефективності в дорозі перегляньте також матеріали про 
+              інвертори, зарядні пристрої та автономне живлення для авто.
+            </p>
+
+            <p>
+              <a href="#" class="calc-cta" aria-label="Отримати чек-лист економії пального у форматі PDF">
+                <span>📄</span>
+                <span>Отримати чек-лист економії пального (PDF)</span>
+              </a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Футер калькулятора -->
+        <div class="calc-footer">
+          <div class="calc-footer-text">
+            © 2025 • Розрахунок витрат пального виконується локально у вашому браузері. Дані не передаються на сервер.
+          </div>
+          <div class="calc-footer-badge">
+            ⛽ Metric only • км · л/100 км · грн/л
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="../js/theme.js"></script>
+  <script src="../js/nav.js"></script>
+  <script src="../js/utils.js"></script>
+
+  <!-- Логіка калькулятора витрат пального -->
+  <script>
+    (function() {
+      'use strict';
+
+      const distanceEl = document.getElementById('distance');
+      const consumptionEl = document.getElementById('consumption');
+      const fuelPriceEl = document.getElementById('fuelPrice');
+      const tripsPerMonthEl = document.getElementById('tripsPerMonth');
+      const tripsPerMonthGroup = document.getElementById('tripsPerMonthGroup');
+      const cityShareEl = document.getElementById('cityShare');
+      const cityShareLabelEl = document.getElementById('cityShareLabel');
+      const acOnEl = document.getElementById('acOn');
+      const distanceLabelEl = document.getElementById('distanceLabel');
+
+      const mainResultEl = document.getElementById('mainResult');
+      const mainResultLabelEl = document.getElementById('mainResultLabel');
+      const mainResultValueEl = document.getElementById('mainResultValue');
+      const mainResultMetaEl = document.getElementById('mainResultMeta');
+
+      const tile1LabelEl = document.getElementById('tile1Label');
+      const tile1ValueEl = document.getElementById('tile1Value');
+      const tile1HintEl = document.getElementById('tile1Hint');
+
+      const tile2LabelEl = document.getElementById('tile2Label');
+      const tile2ValueEl = document.getElementById('tile2Value');
+      const tile2HintEl = document.getElementById('tile2Hint');
+
+      const tile3LabelEl = document.getElementById('tile3Label');
+      const tile3ValueEl = document.getElementById('tile3Value');
+      const tile3HintEl = document.getElementById('tile3Hint');
+
+      const tabs = Array.from(document.querySelectorAll('.calc-tab'));
+      let activeTab = 'trip';
+
+      const fmt1 = new Intl.NumberFormat('uk-UA', {
+        maximumFractionDigits: 1
+      });
+      const fmt1fixed = new Intl.NumberFormat('uk-UA', {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      });
+      const fmt2 = new Intl.NumberFormat('uk-UA', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+      const fmt0 = new Intl.NumberFormat('uk-UA', {
+        maximumFractionDigits: 0
+      });
+
+      function init() {
+        distanceEl.addEventListener('input', recalc);
+        consumptionEl.addEventListener('input', recalc);
+        fuelPriceEl.addEventListener('input', recalc);
+        tripsPerMonthEl.addEventListener('input', recalc);
+        cityShareEl.addEventListener('input', onCityShareChange);
+        acOnEl.addEventListener('change', recalc);
+
+        tabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            const tabId = tab.getAttribute('data-tab');
+            if (!tabId || tabId === activeTab) return;
+            setActiveTab(tabId);
+          });
+        });
+
+        onCityShareChange();
+        setActiveTab('trip');
+        recalc();
+      }
+
+      function setActiveTab(tabId) {
+        activeTab = tabId;
+
+        tabs.forEach(t => {
+          if (t.getAttribute('data-tab') === tabId) {
+            t.classList.add('calc-tab--active');
+          } else {
+            t.classList.remove('calc-tab--active');
+          }
+        });
+
+        if (activeTab === 'trip') {
+          distanceLabelEl.textContent = 'Дистанція поїздки, км';
+          tripsPerMonthGroup.classList.remove('hidden');
+
+          mainResultLabelEl.textContent = 'Вартість поїздки';
+          tile1LabelEl.textContent = 'Пальне на поїздку';
+          tile1HintEl.textContent = 'Орієнтовна кількість літрів пального на разову поїздку.';
+
+          tile2LabelEl.textContent = 'Витрати на місяць';
+          tile2HintEl.textContent = 'За вказаної кількості поїздок на місяць.';
+
+          tile3LabelEl.textContent = 'Витрати на рік';
+          tile3HintEl.textContent = 'Орієнтовні витрати на пальне за 12 місяців цього сценарію.';
+        } else {
+          distanceLabelEl.textContent = 'Дистанція однієї поїздки, км';
+          tripsPerMonthGroup.classList.remove('hidden');
+
+          mainResultLabelEl.textContent = 'Витрати на пальне / місяць';
+          tile1LabelEl.textContent = 'Вартість поїздки';
+          tile1HintEl.textContent = 'При тих самих параметрах маршруту.';
+
+          tile2LabelEl.textContent = 'Пальне на місяць';
+          tile2HintEl.textContent = 'Загальний об’єм пального за всі поїздки на місяць.';
+
+          tile3LabelEl.textContent = 'Витрати на рік';
+          tile3HintEl.textContent = 'Орієнтовні витрати за 12 місяців цього режиму.';
+        }
+
+        recalc();
+      }
+
+      function onCityShareChange() {
+        const city = clamp(parseInt(cityShareEl.value, 10) || 0, 0, 100);
+        const highway = 100 - city;
+        cityShareLabelEl.textContent = 'Місто ' + city + '% / Траса ' + highway + '%';
+        recalc();
+      }
+
+      function recalc() {
+        const distanceKm = Math.max(0, parseFloat(distanceEl.value) || 0);
+        const consumption = Math.max(0, parseFloat(consumptionEl.value) || 0);
+        const fuelPrice = Math.max(0, parseFloat(fuelPriceEl.value) || 0);
+        const tripsPerMonth = Math.max(0, parseInt(tripsPerMonthEl.value, 10) || 0);
+        const cityShare = clamp(parseInt(cityShareEl.value, 10) || 0, 0, 100) / 100;
+        const acOn = acOnEl.checked === true;
+
+        if (!distanceKm || !consumption || !fuelPrice) {
+          resetUI();
+          return;
+        }
+
+        const effectiveConsumption = calcEffectiveConsumption(consumption, cityShare, acOn);
+        const fuelPerTrip = distanceKm * (effectiveConsumption / 100);
+        const costPerTrip = fuelPerTrip * fuelPrice;
+
+        const totalTripsPerMonth = tripsPerMonth > 0 ? tripsPerMonth : 0;
+        const fuelPerMonth = fuelPerTrip * totalTripsPerMonth;
+        const costPerMonth = costPerTrip * totalTripsPerMonth;
+        const fuelPerYear = fuelPerMonth * 12;
+        const costPerYear = costPerMonth * 12;
+
+        let mainValueText = '—';
+        let mainMetaText = '';
+
+        if (activeTab === 'trip') {
+          mainValueText = isFinite(costPerTrip) ? fmt2.format(costPerTrip) + ' грн' : '—';
+          mainMetaText = 
+            'Пальне: ' + fmt1fixed.format(fuelPerTrip) + ' л • ' +
+            'Середня витрата: ' + fmt1fixed.format(effectiveConsumption) + ' л/100 км • ' +
+            'Дистанція: ' + fmt0.format(distanceKm) + ' км';
+        } else {
+          if (totalTripsPerMonth > 0) {
+            mainValueText = isFinite(costPerMonth) ? fmt2.format(costPerMonth) + ' грн/міс' : '—';
+            mainMetaText = 
+              'Поїздок на місяць: ' + fmt0.format(totalTripsPerMonth) + 
+              ' • Дистанція: ' + fmt0.format(distanceKm * totalTripsPerMonth) + ' км/міс • ' +
+              'Пальне: ' + fmt1fixed.format(fuelPerMonth) + ' л/міс';
+          } else {
+            mainValueText = '—';
+            mainMetaText = 'Вкажіть кількість поїздок на місяць, щоб побачити витрати на місяць і рік.';
+          }
+        }
+
+        mainResultValueEl.textContent = mainValueText;
+        mainResultMetaEl.textContent = mainMetaText;
+
+        if (activeTab === 'trip') {
+          tile1ValueEl.textContent = isFinite(fuelPerTrip) ? fmt1fixed.format(fuelPerTrip) + ' л' : '—';
+          tile2ValueEl.textContent = totalTripsPerMonth && isFinite(costPerMonth)
+            ? fmt2.format(costPerMonth) + ' грн/міс'
+            : '—';
+          tile3ValueEl.textContent = totalTripsPerMonth && isFinite(costPerYear)
+            ? fmt2.format(costPerYear) + ' грн/рік'
+            : '—';
+        } else {
+          tile1ValueEl.textContent = isFinite(costPerTrip) ? fmt2.format(costPerTrip) + ' грн' : '—';
+          tile2ValueEl.textContent = totalTripsPerMonth && isFinite(fuelPerMonth)
+            ? fmt1fixed.format(fuelPerMonth) + ' л/міс'
+            : '—';
+          tile3ValueEl.textContent = totalTripsPerMonth && isFinite(costPerYear)
+            ? fmt2.format(costPerYear) + ' грн/рік'
+            : '—';
+        }
+
+        mainResultEl.classList.add('pulse');
+        setTimeout(() => mainResultEl.classList.remove('pulse'), 400);
+      }
+
+      function calcEffectiveConsumption(base, cityShare, acOn) {
+        const highwayShare = 1 - cityShare;
+
+        const cityFactor = 1.10;
+        const highwayFactor = 0.95;
+
+        let effective = base * (cityShare * cityFactor + highwayShare * highwayFactor);
+
+        if (acOn) {
+          effective *= 1.07;
+        }
+
+        return effective;
+      }
+
+      function resetUI() {
+        mainResultValueEl.textContent = '—';
+        mainResultMetaEl.textContent = 'Введіть коректні значення дистанції, витрати та ціни пального, щоб побачити результат.';
+
+        tile1ValueEl.textContent = '—';
+        tile2ValueEl.textContent = '—';
+        tile3ValueEl.textContent = '—';
+      }
+
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>
