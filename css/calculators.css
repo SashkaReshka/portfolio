@@ -802,19 +802,26 @@
    ДОДАТКОВІ ЕЛЕМЕНТИ FUEL-CALCULATOR
    ======================================== */
 
-/* Рядок для повзунка "Місто/Траса" */
+/* ========================================
+   FUEL CALC: рядок з повзунком "Місто/Траса"
+   ======================================== */
+
 .calc-range-row {
   display: flex;
   align-items: center;
   gap: 10px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .calc-range-row input[type="range"] {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;          /* дозволяємо стискатись */
+  max-width: 100%;
 }
 
-/* Підпис до повзунка */
 .calc-range-value {
+  flex: 0 0 auto;
   min-width: 90px;
   text-align: right;
   font-variant-numeric: tabular-nums;
