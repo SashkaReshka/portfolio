@@ -829,6 +829,11 @@
   color: var(--muted);
 }
 
+/* Щоб усередині калькулятора нічого не вилізало по X */
+.calc-body {
+  overflow-x: hidden;
+}
+
 /* Тогл "Кондиціонер увімкнено" */
 .calc-toggle {
   display: inline-flex;
