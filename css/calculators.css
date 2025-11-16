@@ -889,3 +889,27 @@
       padding: 0.75rem 0.9rem;
     }
   }
+
+/* ========================================
+   Мобільна страховка від горизонтального скролу
+   ======================================== */
+
+@media (max-width: 768px) {
+  .calc-body,
+  .calc-tiles,
+  .calc-info,
+  .calc-info-block,
+  .calc-footer {
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  /* На всякий випадок, якщо щось всередині тягне рядок */
+  .calc-info-block,
+  .calc-footer-text,
+  .calc-footer-badge {
+    overflow-wrap: anywhere;
+    word-wrap: break-word;
+  }
+}
